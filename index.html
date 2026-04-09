@@ -11,39 +11,131 @@
       padding: 0;
     }
 
+    :root {
+      --blue: #2563eb;
+      --blue-dim: #1a2540;
+      --blue-border: #1e3a6e;
+      --blue-hover: #1d4ed8;
+      --surface: #16181c;
+      --surface-2: #1a1d22;
+      --border: #1e2229;
+      --text: #d4dce8;
+      --text-muted: #5a6578;
+      --text-dim: #3a4455;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+      50%       { box-shadow: 0 0 18px 4px rgba(37, 99, 235, 0.18); }
+    }
+
+    @keyframes gradientShift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes orb {
+      0%, 100% { transform: translateY(0) scale(1); opacity: 0.45; }
+      50%       { transform: translateY(-28px) scale(1.06); opacity: 0.6; }
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-10px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
     body {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background-color: #111214;
-      color: #d4dce8;
+      background-color: #0d0f12;
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* Ambient background orbs */
+    .bg-orbs {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .bg-orbs span {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+    }
+
+    .bg-orbs span:nth-child(1) {
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, rgba(37,99,235,0.12) 0%, transparent 70%);
+      top: -80px;
+      left: -100px;
+      animation: orb 9s ease-in-out infinite;
+    }
+
+    .bg-orbs span:nth-child(2) {
+      width: 340px;
+      height: 340px;
+      background: radial-gradient(circle, rgba(99,37,235,0.08) 0%, transparent 70%);
+      bottom: 10%;
+      right: -80px;
+      animation: orb 12s ease-in-out infinite reverse;
+    }
+
+    .bg-orbs span:nth-child(3) {
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle, rgba(37,99,235,0.07) 0%, transparent 70%);
+      top: 55%;
+      left: 30%;
+      animation: orb 15s ease-in-out infinite 3s;
     }
 
     /* Top bar */
     .topbar {
+      position: relative;
+      z-index: 10;
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      padding: 0.9rem 2rem;
-      border-bottom: 1px solid #1e2229;
-      background-color: #0e1013;
+      padding: 0.85rem 2rem;
+      border-bottom: 1px solid #181b21;
+      background-color: rgba(10, 11, 14, 0.85);
+      backdrop-filter: blur(12px);
+      animation: fadeIn 0.4s ease both;
     }
 
     .topbar-icon {
       width: 28px;
       height: 28px;
-      background-color: #2563eb;
-      border-radius: 6px;
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      border-radius: 7px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
     }
 
     .topbar-icon svg {
-      width: 16px;
-      height: 16px;
+      width: 15px;
+      height: 15px;
       fill: none;
       stroke: #fff;
       stroke-width: 2;
@@ -58,91 +150,176 @@
     }
 
     .topbar-version {
-      font-size: 0.75rem;
-      color: #4b5563;
+      font-size: 0.72rem;
+      color: #3a4455;
       margin-left: 0.25rem;
+      letter-spacing: 0.04em;
     }
+
+    .topbar-spacer { flex: 1; }
+
+    .topbar-links {
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.82rem;
+      color: #4b5563;
+    }
+
+    .topbar-links a {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .topbar-links a:hover { color: #94a3b8; }
 
     /* Main content */
     .main {
+      position: relative;
+      z-index: 1;
       flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 3rem 1.5rem;
+      padding: 4rem 1.5rem 3rem;
     }
 
-    .header {
+    /* Hero */
+    .hero {
       text-align: center;
-      margin-bottom: 2.5rem;
+      margin-bottom: 3.5rem;
+      animation: fadeUp 0.6s ease both;
     }
 
     .version-tag {
-      display: inline-block;
-      font-size: 0.72rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.7rem;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #2563eb;
-      background-color: #1a2540;
-      border: 1px solid #1e3a6e;
-      border-radius: 4px;
-      padding: 0.2rem 0.6rem;
-      margin-bottom: 1rem;
+      letter-spacing: 0.1em;
+      color: #60a5fa;
+      background-color: var(--blue-dim);
+      border: 1px solid var(--blue-border);
+      border-radius: 20px;
+      padding: 0.22rem 0.75rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .version-tag::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #60a5fa;
+      animation: pulseGlow 2s ease-in-out infinite;
     }
 
     h1 {
-      font-size: clamp(1.8rem, 4vw, 2.6rem);
-      font-weight: 700;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800;
       color: #f1f5f9;
-      letter-spacing: -0.3px;
-      margin-bottom: 0.6rem;
+      letter-spacing: -0.5px;
+      margin-bottom: 0.65rem;
+      line-height: 1.1;
+    }
+
+    .hero-gradient-text {
+      background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientShift 5s ease infinite;
     }
 
     .subtitle {
-      font-size: 0.95rem;
-      color: #6b7a90;
+      font-size: 0.97rem;
+      color: #4b5a6e;
+      max-width: 420px;
+      margin: 0 auto;
+      line-height: 1.6;
     }
 
-    /* Cards */
+    /* Section label */
+    .section-label {
+      width: min(100%, 860px);
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #3a4455;
+      margin-bottom: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, #1e2229 0%, transparent 100%);
+    }
+
+    /* Launch Cards */
     .cards {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-      gap: 1.25rem;
-      width: min(100%, 820px);
-      margin-bottom: 2.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.1rem;
+      width: min(100%, 860px);
+      margin-bottom: 3rem;
+      animation: fadeUp 0.65s ease 0.1s both;
     }
 
     .card {
-      background-color: #16181c;
-      border: 1px solid #1e2229;
-      border-radius: 10px;
-      padding: 1.8rem;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem;
       text-align: left;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(37,99,235,0.04) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
     }
 
     .card:hover {
-      border-color: #2563eb;
+      border-color: #2a4a7f;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.35), 0 0 0 1px rgba(37,99,235,0.08);
     }
+
+    .card:hover::before { opacity: 1; }
 
     .card-icon {
       width: 42px;
       height: 42px;
-      border-radius: 8px;
+      border-radius: 9px;
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 1.1rem;
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       font-weight: 700;
+      transition: transform 0.2s;
     }
 
+    .card:hover .card-icon { transform: scale(1.06); }
+
     .card-icon.wasm {
-      background-color: #1a2540;
+      background-color: var(--blue-dim);
       color: #60a5fa;
-      border: 1px solid #1e3a6e;
+      border: 1px solid var(--blue-border);
     }
 
     .card-icon.js {
@@ -154,61 +331,67 @@
     }
 
     .card h2 {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 600;
       color: #e2e8f0;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.45rem;
     }
 
     .card p {
-      font-size: 0.875rem;
+      font-size: 0.865rem;
       line-height: 1.65;
-      color: #5a6578;
-      margin-bottom: 1.25rem;
+      color: var(--text-muted);
+      margin-bottom: 1.2rem;
     }
 
     .tag-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.35rem;
-      margin-bottom: 1.4rem;
+      gap: 0.3rem;
+      margin-bottom: 1.3rem;
     }
 
     .tag {
-      font-size: 0.7rem;
-      padding: 0.2rem 0.55rem;
+      font-size: 0.68rem;
+      padding: 0.18rem 0.5rem;
       border-radius: 4px;
-      background-color: #1a1d22;
-      border: 1px solid #282d36;
-      color: #6b7a90;
+      background-color: #131518;
+      border: 1px solid #23272f;
+      color: #4b5563;
     }
 
     .tag.highlight {
-      border-color: #1e3a6e;
+      border-color: var(--blue-border);
       color: #60a5fa;
+      background-color: rgba(26,37,64,0.6);
     }
 
     .launch-btn {
       display: inline-flex;
       align-items: center;
       gap: 0.45rem;
-      padding: 0.6rem 1.3rem;
-      border-radius: 6px;
+      padding: 0.6rem 1.25rem;
+      border-radius: 7px;
       font-size: 0.875rem;
       font-weight: 600;
       cursor: pointer;
       text-decoration: none;
       border: none;
-      transition: background-color 0.15s, color 0.15s;
+      transition: background-color 0.15s, transform 0.15s, box-shadow 0.15s;
+    }
+
+    .launch-btn:hover {
+      transform: translateY(-1px);
     }
 
     .btn-wasm {
-      background-color: #2563eb;
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
       color: #fff;
+      box-shadow: 0 2px 10px rgba(37,99,235,0.3);
     }
 
     .btn-wasm:hover {
-      background-color: #1d4ed8;
+      box-shadow: 0 4px 18px rgba(37,99,235,0.45);
     }
 
     .btn-js {
@@ -222,16 +405,264 @@
     }
 
     .btn-arrow {
-      width: 15px;
-      height: 15px;
+      width: 14px;
+      height: 14px;
+      transition: transform 0.15s;
+    }
+
+    .launch-btn:hover .btn-arrow {
+      transform: translateX(3px);
+    }
+
+    /* ── Latest Version Section ── */
+    .latest-section {
+      width: min(100%, 860px);
+      margin-bottom: 3rem;
+      animation: fadeUp 0.65s ease 0.2s both;
+    }
+
+    .latest-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .latest-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding: 1.5rem 1.75rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .latest-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .latest-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: rgba(37,99,235,0.12);
+      border: 1px solid var(--blue-border);
+      color: #60a5fa;
+      border-radius: 4px;
+      padding: 0.18rem 0.55rem;
+      width: fit-content;
+    }
+
+    .latest-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      letter-spacing: -0.2px;
+    }
+
+    .latest-date {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+
+    .latest-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.3rem;
+    }
+
+    .latest-meta .version-num {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #60a5fa;
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+
+    .latest-meta .version-sub {
+      font-size: 0.72rem;
+      color: #3a4455;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .latest-body {
+      padding: 1.5rem 1.75rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.75rem;
+    }
+
+    @media (max-width: 600px) {
+      .latest-body { grid-template-columns: 1fr; }
+      .latest-meta { align-items: flex-start; }
+    }
+
+    .latest-desc {
+      font-size: 0.875rem;
+      line-height: 1.75;
+      color: #5a6a80;
+    }
+
+    .latest-desc strong {
+      color: #94a3b8;
+      font-weight: 600;
+    }
+
+    .latest-highlights {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .highlight-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      font-size: 0.845rem;
+      color: #5a6a80;
+    }
+
+    .highlight-item::before {
+      content: '';
+      flex-shrink: 0;
+      margin-top: 7px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #2563eb;
+    }
+
+    .highlight-item strong {
+      color: #94a3b8;
+      font-weight: 600;
+    }
+
+    /* ── Versions Section ── */
+    .versions-section {
+      width: min(100%, 860px);
+      margin-bottom: 3rem;
+      animation: fadeUp 0.65s ease 0.3s both;
+    }
+
+    .versions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .version-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.1rem 1.25rem;
+      cursor: pointer;
+      transition: border-color 0.2s, background-color 0.2s, transform 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      position: relative;
+    }
+
+    .version-item:hover {
+      border-color: #2a4a7f;
+      background: #1b1f27;
+      transform: translateY(-2px);
+    }
+
+    .version-item.active {
+      border-color: var(--blue);
+      background: rgba(26,37,64,0.55);
+    }
+
+    .version-item.active::after {
+      content: '';
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #60a5fa;
+      animation: pulseGlow 2s ease-in-out infinite;
+    }
+
+    .version-left {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .version-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #d4dce8;
+    }
+
+    .version-item.active .version-name { color: #93c5fd; }
+
+    .version-channel {
+      font-size: 0.68rem;
+      color: #3a4455;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .version-arrow {
+      color: #2a3040;
+      font-size: 0.75rem;
+      transition: color 0.15s, transform 0.15s;
+    }
+
+    .version-item:hover .version-arrow,
+    .version-item.active .version-arrow {
+      color: #60a5fa;
+      transform: translateX(2px);
+    }
+
+    /* Version detail panel */
+    .version-detail {
+      margin-top: 0.9rem;
+      background: rgba(22,24,28,0.8);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.3rem 1.5rem;
+      display: none;
+      animation: slideIn 0.25s ease both;
+    }
+
+    .version-detail.visible { display: block; }
+
+    .version-detail-title {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #60a5fa;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.55rem;
+    }
+
+    .version-detail-text {
+      font-size: 0.855rem;
+      line-height: 1.7;
+      color: #5a6a80;
     }
 
     /* Divider */
     .divider {
-      width: min(100%, 820px);
+      width: min(100%, 860px);
       height: 1px;
-      background-color: #1e2229;
-      margin-bottom: 1.5rem;
+      background: linear-gradient(to right, transparent, #1e2229 20%, #1e2229 80%, transparent);
+      margin-bottom: 2rem;
     }
 
     /* Info row */
@@ -240,8 +671,9 @@
       gap: 1.75rem;
       flex-wrap: wrap;
       justify-content: center;
-      font-size: 0.8rem;
-      color: #3a4455;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      animation: fadeIn 0.6s ease 0.4s both;
     }
 
     .info-row span {
@@ -255,15 +687,69 @@
       width: 5px;
       height: 5px;
       border-radius: 50%;
-      background-color: #2563eb;
+      background-color: var(--blue);
       display: inline-block;
+      opacity: 0.7;
     }
 
+    /* Social buttons */
+    .social-row {
+      display: flex;
+      gap: 0.85rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 1.75rem;
+      animation: fadeIn 0.6s ease 0.5s both;
+    }
+
+    .social-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.65rem 1.4rem;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s, filter 0.15s, box-shadow 0.15s;
+    }
+
+    .social-btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.12);
+    }
+
+    .social-btn svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .btn-youtube {
+      background-color: #c00;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(204,0,0,0.25);
+    }
+
+    .btn-youtube:hover { box-shadow: 0 4px 16px rgba(204,0,0,0.4); }
+
+    .btn-discord {
+      background-color: #4752c4;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(88,101,242,0.2);
+    }
+
+    .btn-discord:hover { box-shadow: 0 4px 16px rgba(88,101,242,0.4); }
+
     footer {
-      padding: 1.2rem 2rem;
-      border-top: 1px solid #1e2229;
-      font-size: 0.75rem;
-      color: #2d3340;
+      position: relative;
+      z-index: 1;
+      padding: 1.1rem 2rem;
+      border-top: 1px solid #181b21;
+      font-size: 0.73rem;
+      color: #272d3a;
       text-align: center;
     }
 
@@ -271,53 +757,16 @@
       color: #2563eb;
       font-weight: 600;
     }
-
-    /* Social buttons */
-    .social-row {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-top: 2rem;
-    }
-
-    .social-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6rem;
-      padding: 0.75rem 1.6rem;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      font-weight: 700;
-      text-decoration: none;
-      border: none;
-      cursor: pointer;
-      transition: transform 0.15s, filter 0.15s;
-    }
-
-    .social-btn:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.15);
-    }
-
-    .social-btn svg {
-      width: 22px;
-      height: 22px;
-      flex-shrink: 0;
-    }
-
-    .btn-youtube {
-      background-color: #ff0000;
-      color: #fff;
-    }
-
-    .btn-discord {
-      background-color: #5865f2;
-      color: #fff;
-    }
   </style>
 </head>
 <body>
+
+  <!-- Ambient background -->
+  <div class="bg-orbs" aria-hidden="true">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
 
   <!-- Top bar -->
   <div class="topbar">
@@ -330,29 +779,37 @@
       </svg>
     </div>
     <span class="topbar-name">Aero Client</span>
-    <span class="topbar-version">u2</span>
+    <span class="topbar-version">beta 1.0.0</span>
+    <div class="topbar-spacer"></div>
+    <nav class="topbar-links">
+      <a href="https://discord.gg/JgFMgsuHux" target="_blank" rel="noopener noreferrer">Discord</a>
+      <a href="https://www.youtube.com/@acorndevv" target="_blank" rel="noopener noreferrer">YouTube</a>
+    </nav>
   </div>
 
   <!-- Main -->
   <div class="main">
 
-    <div class="header">
+    <!-- Hero -->
+    <div class="hero">
       <span class="version-tag">Eaglercraft 1.12.2</span>
-      <h1>Aero Client</h1>
-      <p class="subtitle">Choose a runtime to launch the client</p>
+      <h1>Aero <span class="hero-gradient-text">Client</span></h1>
+      <p class="subtitle">Choose your build and jump in. WASM is faster; JavaScript is the safe fallback.</p>
     </div>
 
+    <!-- Launch section -->
+    <div class="section-label">Launch</div>
     <div class="cards">
 
       <!-- WASM -->
       <div class="card">
         <div class="card-icon wasm">⚡</div>
         <h2>WASM Build</h2>
-        <p>WebAssembly runs closer to native speed, which means lower latency and better FPS. Use this if your browser supports it.</p>
+        <p>WebAssembly runs much closer to native speed — lower latency, smoother frame times. Use this on any modern browser.</p>
         <div class="tag-row">
           <span class="tag highlight">Recommended</span>
           <span class="tag">High Performance</span>
-          <span class="tag">Lower Latency</span>
+          <span class="tag">Low Latency</span>
         </div>
         <a href="WASM Build.html" class="launch-btn btn-wasm">
           Launch WASM
@@ -368,7 +825,7 @@
       <div class="card">
         <div class="card-icon js">JS</div>
         <h2>JavaScript Build</h2>
-        <p>Pure JavaScript with no dependencies. Works everywhere, every time. Good fallback if WASM has issues on your device.</p>
+        <p>Pure JavaScript, zero dependencies. If WASM ever causes problems on your device, this one always works.</p>
         <div class="tag-row">
           <span class="tag">Universal</span>
           <span class="tag">No Setup</span>
@@ -386,25 +843,103 @@
 
     </div>
 
+    <!-- Latest version section -->
+    <div class="section-label">Latest Release</div>
+    <div class="latest-section">
+      <div class="latest-card">
+        <div class="latest-header">
+          <div class="latest-title-group">
+            <span class="latest-badge">&#x25CF;&nbsp; Beta</span>
+            <span class="latest-title">Beta 1.0.0</span>
+            <span class="latest-date">Initial release &mdash; 2026</span>
+          </div>
+          <div class="latest-meta">
+            <span class="version-num">1.0.0</span>
+            <span class="version-sub">Beta Channel</span>
+          </div>
+        </div>
+        <div class="latest-body">
+          <div>
+            <p class="latest-desc">
+              The <strong>opening beta build</strong> of Aero Client for Eaglercraft 1.12.2.
+              This release marks the start of active development — it ships with a solid
+              collection of mods and features baked in from day one, giving players a
+              fully-loaded starting point rather than a barebones proof of concept.<br><br>
+              Expect rough edges here and there; it&rsquo;s a beta. Reports and feedback
+              from the community help shape what comes next.
+            </p>
+          </div>
+          <div class="latest-highlights">
+            <div class="highlight-item"><span><strong>Multi-mod bundle</strong> &mdash; several mods included out of the box</span></div>
+            <div class="highlight-item"><span><strong>WASM + JS</strong> &mdash; both runtimes available from launch</span></div>
+            <div class="highlight-item"><span><strong>Eaglercraft 1.12.2</strong> base with full client compatibility</span></div>
+            <div class="highlight-item"><span><strong>Community build</strong> &mdash; open beta, feedback welcome</span></div>
+            <div class="highlight-item"><span><strong>Active dev</strong> &mdash; updates planned based on reports</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Versions section -->
+    <div class="section-label">Versions</div>
+    <div class="versions-section">
+      <div class="versions-grid">
+
+        <div class="version-item active" data-version="beta-1-0-0" onclick="selectVersion(this)">
+          <div class="version-left">
+            <span class="version-name">Beta 1.0.0</span>
+            <span class="version-channel">Beta Channel</span>
+          </div>
+          <span class="version-arrow">&#x276F;</span>
+        </div>
+
+        <!-- Placeholder for future versions -->
+        <div class="version-item" style="opacity:0.35; cursor:default; pointer-events:none;">
+          <div class="version-left">
+            <span class="version-name">Beta 1.1.0</span>
+            <span class="version-channel">Coming soon</span>
+          </div>
+          <span class="version-arrow">&#x276F;</span>
+        </div>
+
+        <div class="version-item" style="opacity:0.35; cursor:default; pointer-events:none;">
+          <div class="version-left">
+            <span class="version-name">Stable 1.0.0</span>
+            <span class="version-channel">Coming soon</span>
+          </div>
+          <span class="version-arrow">&#x276F;</span>
+        </div>
+
+      </div>
+
+      <!-- Detail panel -->
+      <div class="version-detail visible" id="detail-beta-1-0-0">
+        <div class="version-detail-title">Beta 1.0.0 &mdash; Release Notes</div>
+        <div class="version-detail-text">
+          First public beta. Ships with the initial set of mods and client features.
+          Both WASM and JavaScript builds are available. This is the foundation everything
+          else will be built on &mdash; more updates coming as the community grows.
+        </div>
+      </div>
+    </div>
+
     <div class="divider"></div>
 
     <div class="info-row">
       <span>Eaglercraft 1.12.2</span>
-      <span>Aero Client u2</span>
+      <span>Aero Client Beta 1.0.0</span>
       <span>WASM &amp; JS builds</span>
     </div>
 
     <div class="social-row">
       <a href="https://www.youtube.com/@acorndevv" target="_blank" rel="noopener noreferrer" class="social-btn btn-youtube">
-        <!-- YouTube icon -->
         <svg viewBox="0 0 24 24" fill="currentColor">
           <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.5 31.5 0 0 0 0 12a31.5 31.5 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.5 31.5 0 0 0 24 12a31.5 31.5 0 0 0-.5-5.8z"/>
-          <polygon points="9.75,15.5 15.5,12 9.75,8.5" fill="#ff0000"/>
+          <polygon points="9.75,15.5 15.5,12 9.75,8.5" fill="#c00"/>
         </svg>
         YouTube
       </a>
       <a href="https://discord.gg/JgFMgsuHux" target="_blank" rel="noopener noreferrer" class="social-btn btn-discord">
-        <!-- Discord icon -->
         <svg viewBox="0 0 24 24" fill="currentColor">
           <path d="M20.3 3A18.8 18.8 0 0 0 15.6 1.5a.07.07 0 0 0-.07.04 13 13 0 0 0-.57 1.18 17.4 17.4 0 0 0-5.23 0A12.1 12.1 0 0 0 9.15 1.54a.07.07 0 0 0-.07-.04A18.7 18.7 0 0 0 3.7 3a.07.07 0 0 0-.03.03C.53 7.65-.32 12.15.1 16.6a.08.08 0 0 0 .03.05 18.9 18.9 0 0 0 5.7 2.88.07.07 0 0 0 .08-.03 13.5 13.5 0 0 0 1.16-1.89.07.07 0 0 0-.04-.1 12.4 12.4 0 0 1-1.78-.85.07.07 0 0 1-.01-.12l.36-.28a.07.07 0 0 1 .07-.01c3.73 1.7 7.77 1.7 11.46 0a.07.07 0 0 1 .07.01l.36.28a.07.07 0 0 1-.01.12 11.7 11.7 0 0 1-1.78.85.07.07 0 0 0-.04.1c.34.65.73 1.28 1.16 1.89a.07.07 0 0 0 .08.03 18.8 18.8 0 0 0 5.71-2.88.07.07 0 0 0 .03-.05c.48-4.98-.8-9.44-3.57-13.34a.06.06 0 0 0-.03-.03zM8.02 14.1c-1.13 0-2.06-1.04-2.06-2.31s.91-2.31 2.06-2.31c1.16 0 2.07 1.05 2.06 2.31 0 1.27-.91 2.31-2.06 2.31zm7.97 0c-1.13 0-2.06-1.04-2.06-2.31s.91-2.31 2.06-2.31c1.16 0 2.07 1.05 2.06 2.31 0 1.27-.9 2.31-2.06 2.31z"/>
         </svg>
@@ -417,6 +952,24 @@
   <footer>
     &copy; 2026 Aero Client &mdash; Eaglercraft 1.12.2 &mdash; <span class="footer-credit">Coded by AcornDev</span>
   </footer>
+
+  <script>
+    function selectVersion(el) {
+      // deactivate all
+      document.querySelectorAll('.version-item').forEach(function(item) {
+        item.classList.remove('active');
+      });
+      // hide all detail panels
+      document.querySelectorAll('.version-detail').forEach(function(panel) {
+        panel.classList.remove('visible');
+      });
+      // activate clicked
+      el.classList.add('active');
+      var id = 'detail-' + el.dataset.version;
+      var panel = document.getElementById(id);
+      if (panel) panel.classList.add('visible');
+    }
+  </script>
 
 </body>
 </html>
