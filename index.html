@@ -498,7 +498,7 @@
     .launch-btn:hover .btn-arrow { transform: translateX(3px); }
 
     /* ══════════════════════════════════════════════
-       BETA 1.0.0 SHOWCASE (full-width with bg image)
+       BETA 1.0.4 SHOWCASE (full-width with bg image)
     ══════════════════════════════════════════════ */
     .showcase-section {
       width: 100%;
@@ -515,13 +515,47 @@
     .showcase-bg {
       position: absolute;
       inset: 0;
-      background-image: url('https://github.com/user-attachments/assets/a462f9e1-fefc-4660-b914-efcaff6b65b1');
+      background-image: url('https://github.com/user-attachments/assets/24d8fea1-38b9-4165-9b6f-9a927e619312');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
       filter: brightness(0.38) saturate(0.8);
       z-index: 0;
     }
+
+    /* Build type tabs in showcase */
+    .build-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .build-tab {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.78rem; font-weight: 600;
+      cursor: pointer; border: 1px solid var(--border);
+      background: rgba(13,15,18,0.55);
+      color: #4b5a6e;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      backdrop-filter: blur(6px);
+    }
+
+    .build-tab.active {
+      background: rgba(37,99,235,0.18);
+      border-color: rgba(37,99,235,0.45);
+      color: #93c5fd;
+    }
+
+    .build-tab:hover:not(.active) {
+      background: rgba(255,255,255,0.05);
+      border-color: #2a3040;
+      color: #94a3b8;
+    }
+
+    .build-panel { display: none; }
+    .build-panel.active { display: block; }
 
     .showcase-overlay {
       position: absolute;
@@ -890,7 +924,7 @@
       </svg>
     </div>
     <span class="topbar-name">Aero Client</span>
-    <span class="topbar-version">beta 1.0.0</span>
+    <span class="topbar-version">beta 1.0.4</span>
     <div class="topbar-spacer"></div>
     <nav class="topbar-links">
       <a href="https://discord.gg/JgFMgsuHux" target="_blank" rel="noopener noreferrer">Discord</a>
@@ -921,7 +955,7 @@
           </div>
           <div class="stat-divider"></div>
           <div class="stat-tile">
-            <span class="stat-value">1.0.0</span>
+            <span class="stat-value">1.0.4</span>
             <span class="stat-label">Current Version</span>
           </div>
           <div class="stat-divider"></div>
@@ -1051,7 +1085,7 @@
     </div>
     <!-- /content-grid -->
 
-    <!-- ══ Beta 1.0.0 showcase with background image ══ -->
+    <!-- ══ Beta 1.0.4 showcase with background image ══ -->
     <section class="showcase-section">
       <div class="showcase-bg" aria-hidden="true"></div>
       <div class="showcase-overlay" aria-hidden="true"></div>
@@ -1059,64 +1093,85 @@
 
         <div class="showcase-left">
           <span class="showcase-badge">&#x25CF;&nbsp; Latest Release</span>
-          <h2 class="showcase-title">Beta <span>1.0.0</span><br>Is Live</h2>
-          <p class="showcase-desc">
-            The <strong>opening beta build</strong> of Aero Client for Eaglercraft 1.12.2.
-            Ships with a solid collection of mods and features from day one &mdash; a
-            fully-loaded starting point, not a barebones proof of concept.<br><br>
-            Expect rough edges; reports and feedback from the community shape what
-            comes next.
-          </p>
-          <div class="showcase-actions">
-            <a href="WASM Build.html" class="launch-btn btn-wasm">
-              Launch WASM
-              <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-            </a>
-            <a href="Javascript Build.html" class="launch-btn btn-js">
-              Launch JS
-              <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-            </a>
+          <h2 class="showcase-title">Beta <span>1.0.4</span><br>Is Live</h2>
+
+          <!-- WASM / JS tab switcher -->
+          <div class="build-tabs">
+            <button class="build-tab active" onclick="switchBuild('wasm', this)">⚡ WASM Build</button>
+            <button class="build-tab" onclick="switchBuild('js', this)">JS Build</button>
+          </div>
+
+          <!-- WASM panel -->
+          <div class="build-panel active" id="showcase-wasm">
+            <p class="showcase-desc">
+              <strong>Beta 1.0.4 — WASM Build.</strong> This version patches many bugs,
+              introduces more customizability for both the main menu and mod menu,
+              and improves FPS along with a lot of other improvements.
+              WebAssembly delivers near-native performance for the smoothest experience.
+            </p>
+            <div class="showcase-actions">
+              <a href="WASM Build.html" class="launch-btn btn-wasm">
+                Launch WASM
+                <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- JS panel -->
+          <div class="build-panel" id="showcase-js">
+            <p class="showcase-desc">
+              <strong>Beta 1.0.4 — JavaScript Build.</strong> This version patches many bugs,
+              introduces more customizability for both the main menu and mod menu,
+              and improves FPS along with a lot of other improvements.
+              Pure JavaScript ensures maximum browser compatibility.
+            </p>
+            <div class="showcase-actions">
+              <a href="Javascript Build.html" class="launch-btn btn-js">
+                Launch JS
+                <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </a>
+            </div>
           </div>
         </div>
 
         <div class="showcase-right">
           <div class="showcase-highlight">
+            <div class="showcase-highlight-icon">🐛</div>
+            <div class="showcase-highlight-body">
+              <span class="showcase-highlight-title">Bug patches</span>
+              <span class="showcase-highlight-sub">Many bugs fixed from previous builds</span>
+            </div>
+          </div>
+          <div class="showcase-highlight">
+            <div class="showcase-highlight-icon">🎨</div>
+            <div class="showcase-highlight-body">
+              <span class="showcase-highlight-title">More customizability</span>
+              <span class="showcase-highlight-sub">Main menu &amp; mod menu now more flexible</span>
+            </div>
+          </div>
+          <div class="showcase-highlight">
             <div class="showcase-highlight-icon">⚡</div>
             <div class="showcase-highlight-body">
-              <span class="showcase-highlight-title">Multi-mod bundle</span>
-              <span class="showcase-highlight-sub">Several mods included out of the box</span>
+              <span class="showcase-highlight-title">FPS improvements</span>
+              <span class="showcase-highlight-sub">Smoother frame times across the board</span>
             </div>
           </div>
           <div class="showcase-highlight">
             <div class="showcase-highlight-icon">🔧</div>
             <div class="showcase-highlight-body">
-              <span class="showcase-highlight-title">WASM + JS runtimes</span>
-              <span class="showcase-highlight-sub">Both builds available from day one</span>
-            </div>
-          </div>
-          <div class="showcase-highlight">
-            <div class="showcase-highlight-icon">🎮</div>
-            <div class="showcase-highlight-body">
-              <span class="showcase-highlight-title">Eaglercraft 1.12.2 base</span>
-              <span class="showcase-highlight-sub">Full client compatibility</span>
-            </div>
-          </div>
-          <div class="showcase-highlight">
-            <div class="showcase-highlight-icon">💬</div>
-            <div class="showcase-highlight-body">
-              <span class="showcase-highlight-title">Community build</span>
-              <span class="showcase-highlight-sub">Open beta &mdash; your feedback matters</span>
+              <span class="showcase-highlight-title">WASM + JS builds</span>
+              <span class="showcase-highlight-sub">Both runtimes updated to 1.0.4</span>
             </div>
           </div>
           <div class="showcase-highlight">
             <div class="showcase-highlight-icon">🚀</div>
             <div class="showcase-highlight-body">
-              <span class="showcase-highlight-title">Active development</span>
-              <span class="showcase-highlight-sub">Updates rolling out based on reports</span>
+              <span class="showcase-highlight-title">And much more</span>
+              <span class="showcase-highlight-sub">Lots of other improvements included</span>
             </div>
           </div>
         </div>
@@ -1134,29 +1189,26 @@
           <div class="latest-header">
             <div class="latest-title-group">
               <span class="latest-badge">&#x25CF;&nbsp; Beta</span>
-              <span class="latest-title">Beta 1.0.0</span>
-              <span class="latest-date">Initial release &mdash; 2026</span>
+              <span class="latest-title">Beta 1.0.4</span>
+              <span class="latest-date">Latest release &mdash; 2026</span>
             </div>
             <div class="latest-meta">
-              <span class="version-num">1.0.0</span>
+              <span class="version-num">1.0.4</span>
               <span class="version-sub">Beta Channel</span>
             </div>
           </div>
           <div class="latest-body">
             <p class="latest-desc">
-              The <strong>opening beta build</strong> of Aero Client for Eaglercraft 1.12.2.
-              This release marks the start of active development &mdash; it ships with a solid
-              collection of mods and features baked in from day one, giving players a
-              fully-loaded starting point rather than a barebones proof of concept.<br><br>
-              Expect rough edges here and there; it&rsquo;s a beta. Reports and feedback
-              from the community help shape what comes next.
+              <strong>Beta 1.0.4</strong> patches many bugs, introduces more customizability for both
+              the main menu and mod menu, and improves FPS along with a lot of other improvements.
+              Both the WASM and JavaScript builds have been updated to this version.
             </p>
             <div class="latest-highlights">
-              <div class="highlight-item"><span><strong>Multi-mod bundle</strong> &mdash; several mods included out of the box</span></div>
-              <div class="highlight-item"><span><strong>WASM + JS</strong> &mdash; both runtimes available from launch</span></div>
-              <div class="highlight-item"><span><strong>Eaglercraft 1.12.2</strong> base with full client compatibility</span></div>
-              <div class="highlight-item"><span><strong>Community build</strong> &mdash; open beta, feedback welcome</span></div>
-              <div class="highlight-item"><span><strong>Active dev</strong> &mdash; updates planned based on reports</span></div>
+              <div class="highlight-item"><span><strong>Bug patches</strong> &mdash; many issues from previous builds resolved</span></div>
+              <div class="highlight-item"><span><strong>Main menu &amp; mod menu</strong> &mdash; more customizability options added</span></div>
+              <div class="highlight-item"><span><strong>FPS improvements</strong> &mdash; smoother frame times across the board</span></div>
+              <div class="highlight-item"><span><strong>WASM + JS builds</strong> &mdash; both runtimes updated to 1.0.4</span></div>
+              <div class="highlight-item"><span><strong>And much more</strong> &mdash; lots of other improvements included</span></div>
             </div>
           </div>
         </div>
@@ -1168,32 +1220,57 @@
 
         <div class="versions-layout">
 
-          <div class="version-item active" data-version="beta-1-0-0" onclick="selectVersion(this)">
+          <div class="version-item active" data-version="beta-1-0-4-wasm" onclick="selectVersion(this)">
             <div class="version-left">
-              <span class="version-name">Beta 1.0.0</span>
-              <span class="version-channel">Beta Channel &mdash; Current</span>
+              <span class="version-name">Beta 1.0.4 — WASM</span>
+              <span class="version-channel">Beta Channel &mdash; Latest</span>
             </div>
             <span class="version-arrow">&#x276F;</span>
           </div>
 
-          <!-- Beta 1.0.1 coming soon -->
-          <div class="version-item" style="opacity:0.38; cursor:default; pointer-events:none;">
+          <div class="version-item" data-version="beta-1-0-4-js" onclick="selectVersion(this)">
             <div class="version-left">
-              <span class="version-name">Beta 1.0.1</span>
-              <span class="version-channel">Coming soon &mdash; lots of patches</span>
+              <span class="version-name">Beta 1.0.4 — JS</span>
+              <span class="version-channel">Beta Channel &mdash; Latest</span>
+            </div>
+            <span class="version-arrow">&#x276F;</span>
+          </div>
+
+          <div class="version-item" data-version="beta-1-0-0" onclick="selectVersion(this)">
+            <div class="version-left">
+              <span class="version-name">Beta 1.0.0</span>
+              <span class="version-channel">Beta Channel &mdash; Previous</span>
             </div>
             <span class="version-arrow">&#x276F;</span>
           </div>
 
         </div>
 
-        <!-- Detail panel -->
-        <div class="version-detail visible" id="detail-beta-1-0-0">
+        <!-- Detail panels -->
+        <div class="version-detail visible" id="detail-beta-1-0-4-wasm">
+          <div class="version-detail-title">Beta 1.0.4 — WASM Build &mdash; Release Notes</div>
+          <div class="version-detail-text">
+            Patches many bugs, introduces more customizability for both the main menu and mod menu,
+            and improves FPS along with a lot of other improvements.
+            WebAssembly build delivers near-native performance for the best in-game experience.
+          </div>
+        </div>
+
+        <div class="version-detail" id="detail-beta-1-0-4-js">
+          <div class="version-detail-title">Beta 1.0.4 — JavaScript Build &mdash; Release Notes</div>
+          <div class="version-detail-text">
+            Patches many bugs, introduces more customizability for both the main menu and mod menu,
+            and improves FPS along with a lot of other improvements.
+            Pure JavaScript build — maximum browser compatibility, zero dependencies.
+          </div>
+        </div>
+
+        <div class="version-detail" id="detail-beta-1-0-0">
           <div class="version-detail-title">Beta 1.0.0 &mdash; Release Notes</div>
           <div class="version-detail-text">
             First public beta. Ships with the initial set of mods and client features.
             Both WASM and JavaScript builds are available. This is the foundation everything
-            else will be built on &mdash; more updates coming as the community grows.
+            else was built on.
           </div>
         </div>
       </div>
@@ -1205,7 +1282,7 @@
     <div class="footer-strip">
       <div class="info-chips">
         <span>Eaglercraft 1.12.2</span>
-        <span>Aero Client Beta 1.0.0</span>
+        <span>Aero Client Beta 1.0.4</span>
         <span>WASM &amp; JS builds</span>
       </div>
       <div class="footer-spacer"></div>
@@ -1245,6 +1322,14 @@
       var id = 'detail-' + el.dataset.version;
       var panel = document.getElementById(id);
       if (panel) panel.classList.add('visible');
+    }
+
+    function switchBuild(build, btn) {
+      document.querySelectorAll('.build-tab').forEach(function(t) { t.classList.remove('active'); });
+      document.querySelectorAll('.build-panel').forEach(function(p) { p.classList.remove('active'); });
+      btn.classList.add('active');
+      var panel = document.getElementById('showcase-' + build);
+      if (panel) panel.classList.add('active');
     }
   </script>
 
