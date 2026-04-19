@@ -5,1333 +5,262 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Aero Client Launcher</title>
   <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
     :root {
-      --blue: #2563eb;
-      --blue-dim: #1a2540;
-      --blue-border: #1e3a6e;
-      --blue-hover: #1d4ed8;
-      --surface: #16181c;
-      --surface-2: #1a1d22;
-      --border: #1e2229;
-      --text: #d4dce8;
-      --text-muted: #5a6578;
-      --text-dim: #3a4455;
+      --bg: #0f1115;
+      --panel: #171a21;
+      --panel-2: #1d2230;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --blue: #3b82f6;
+      --blue-2: #2563eb;
+      --gold: #f59e0b;
+      --border: #2b3140;
     }
 
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(18px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
-
-    @keyframes pulseGlow {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
-      50%       { box-shadow: 0 0 18px 4px rgba(37, 99, 235, 0.18); }
-    }
-
-    @keyframes pulseGlowDot {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50%       { opacity: 0.6; transform: scale(1.4); }
-    }
-
-    @keyframes gradientShift {
-      0%   { background-position: 0% 50%; }
-      50%  { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    @keyframes orb {
-      0%, 100% { transform: translateY(0) scale(1); opacity: 0.45; }
-      50%       { transform: translateY(-28px) scale(1.06); opacity: 0.6; }
-    }
-
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(-10px); }
-      to   { opacity: 1; transform: translateX(0); }
-    }
+    * { box-sizing: border-box; }
 
     body {
+      margin: 0;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background-color: #0d0f12;
+      font-family: Inter, Segoe UI, Roboto, sans-serif;
+      background: radial-gradient(circle at top, #111827, var(--bg) 45%);
       color: var(--text);
-      overflow-x: hidden;
+      display: grid;
+      place-items: center;
+      padding: 24px;
     }
 
-    /* ── Ambient background orbs ── */
-    .bg-orbs {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
-    }
-
-    .bg-orbs span {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(80px);
-    }
-
-    .bg-orbs span:nth-child(1) {
-      width: 420px; height: 420px;
-      background: radial-gradient(circle, rgba(37,99,235,0.12) 0%, transparent 70%);
-      top: -80px; left: -100px;
-      animation: orb 9s ease-in-out infinite;
-    }
-
-    .bg-orbs span:nth-child(2) {
-      width: 340px; height: 340px;
-      background: radial-gradient(circle, rgba(99,37,235,0.08) 0%, transparent 70%);
-      bottom: 10%; right: -80px;
-      animation: orb 12s ease-in-out infinite reverse;
-    }
-
-    .bg-orbs span:nth-child(3) {
-      width: 260px; height: 260px;
-      background: radial-gradient(circle, rgba(37,99,235,0.07) 0%, transparent 70%);
-      top: 55%; left: 30%;
-      animation: orb 15s ease-in-out infinite 3s;
-    }
-
-    /* ── Top bar ── */
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.85rem 2rem;
-      border-bottom: 1px solid #181b21;
-      background-color: rgba(10, 11, 14, 0.88);
-      backdrop-filter: blur(14px);
-      animation: fadeIn 0.4s ease both;
-    }
-
-    .topbar-icon {
-      width: 28px; height: 28px;
-      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-      border-radius: 7px;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
-    }
-
-    .topbar-icon svg {
-      width: 15px; height: 15px;
-      fill: none; stroke: #fff;
-      stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
-    }
-
-    .topbar-name { font-size: 0.95rem; font-weight: 600; color: #e2e8f0; }
-    .topbar-version { font-size: 0.72rem; color: #3a4455; margin-left: 0.25rem; letter-spacing: 0.04em; }
-    .topbar-spacer { flex: 1; }
-
-    .topbar-links {
-      display: flex; gap: 1.5rem;
-      font-size: 0.82rem; color: #4b5563;
-    }
-
-    .topbar-links a { color: inherit; text-decoration: none; transition: color 0.15s; }
-    .topbar-links a:hover { color: #94a3b8; }
-
-    /* ── Page wrapper ── */
-    .page-wrapper {
-      position: relative;
-      z-index: 1;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    /* ── Hero ── */
-    .hero-section {
+    .app {
       width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 4rem 1.5rem 3rem;
-      animation: fadeUp 0.6s ease both;
-    }
-
-    .version-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: #60a5fa;
-      background-color: var(--blue-dim);
-      border: 1px solid var(--blue-border);
-      border-radius: 20px;
-      padding: 0.22rem 0.75rem;
-      margin-bottom: 1.2rem;
-    }
-
-    .version-tag::before {
-      content: '';
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: #60a5fa;
-      animation: pulseGlow 2s ease-in-out infinite;
+      max-width: 760px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      box-shadow: 0 16px 50px rgba(0, 0, 0, 0.35);
     }
 
     h1 {
-      font-size: clamp(2rem, 5vw, 3.2rem);
-      font-weight: 800;
-      color: #f1f5f9;
-      letter-spacing: -0.5px;
-      margin-bottom: 0.65rem;
-      line-height: 1.1;
-      text-align: center;
-    }
-
-    .hero-gradient-text {
-      background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
-      background-size: 200% 200%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: gradientShift 5s ease infinite;
+      margin: 0;
+      font-size: clamp(1.8rem, 4vw, 2.3rem);
+      letter-spacing: -0.02em;
     }
 
     .subtitle {
-      font-size: 0.97rem;
-      color: #4b5a6e;
-      max-width: 440px;
-      text-align: center;
-      line-height: 1.6;
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.5;
     }
 
-    /* ── Section label ── */
-    .section-label {
-      font-size: 0.72rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: #3a4455;
-      margin-bottom: 0.9rem;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
-
-    .section-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(to right, #1e2229 0%, transparent 100%);
-    }
-
-    /* ══════════════════════════════════════════════
-       THREE-COLUMN CONTENT GRID
-    ══════════════════════════════════════════════ */
-    .content-grid {
-      width: 100%;
-      max-width: 1240px;
-      padding: 0 1.5rem 3rem;
+    .controls {
+      margin-top: 20px;
       display: grid;
-      grid-template-columns: 220px 1fr 220px;
-      grid-template-rows: auto;
-      gap: 1.25rem;
-      animation: fadeUp 0.65s ease 0.1s both;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
     }
 
-    /* Left sidebar */
-    .sidebar-left {
-      grid-column: 1;
+    .control {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 8px;
     }
 
-    /* Center content */
-    .center-content {
-      grid-column: 2;
-      display: flex;
-      flex-direction: column;
-      gap: 1.1rem;
-    }
-
-    /* Right sidebar */
-    .sidebar-right {
-      grid-column: 3;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    /* ── Sidebar panels ── */
-    .sidebar-panel {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.25rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .sidebar-panel-title {
-      font-size: 0.68rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: #3a4455;
-      padding-bottom: 0.55rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    /* Stat tiles */
-    .stat-tile {
-      display: flex;
-      flex-direction: column;
-      gap: 0.15rem;
-    }
-
-    .stat-value {
-      font-size: 1.35rem;
-      font-weight: 800;
-      color: #60a5fa;
-      letter-spacing: -0.5px;
-      line-height: 1;
-    }
-
-    .stat-label {
-      font-size: 0.7rem;
-      color: #3a4455;
+    label {
+      font-size: 0.82rem;
+      color: var(--muted);
       text-transform: uppercase;
       letter-spacing: 0.06em;
     }
 
-    .stat-divider {
-      height: 1px;
-      background: var(--border);
-    }
-
-    /* Feature list */
-    .feature-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .feature-item {
-      display: flex;
-      align-items: center;
-      gap: 0.55rem;
-      font-size: 0.8rem;
-      color: #5a6a80;
-    }
-
-    .feature-dot {
-      width: 5px; height: 5px;
-      border-radius: 50%;
-      background: var(--blue);
-      flex-shrink: 0;
-    }
-
-    /* Status indicator */
-    .status-row {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.8rem;
-      color: #5a6a80;
-    }
-
-    .status-dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: #22c55e;
-      flex-shrink: 0;
-      animation: pulseGlowDot 2.5s ease-in-out infinite;
-    }
-
-    .status-dot.yellow { background: #eab308; }
-
-    /* Social panel links */
-    .sidebar-social-link {
-      display: flex;
-      align-items: center;
-      gap: 0.65rem;
-      padding: 0.65rem 0.8rem;
-      border-radius: 8px;
-      text-decoration: none;
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: #94a3b8;
-      background: rgba(255,255,255,0.02);
-      border: 1px solid var(--border);
-      transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.15s;
-    }
-
-    .sidebar-social-link:hover {
-      background: rgba(255,255,255,0.05);
-      border-color: #2a3040;
-      color: #e2e8f0;
-      transform: translateX(2px);
-    }
-
-    .sidebar-social-link svg { width: 16px; height: 16px; flex-shrink: 0; }
-    .sidebar-social-link.yt { color: #f87171; }
-    .sidebar-social-link.yt:hover { border-color: rgba(248,113,113,0.3); }
-    .sidebar-social-link.dc { color: #818cf8; }
-    .sidebar-social-link.dc:hover { border-color: rgba(129,140,248,0.3); }
-
-    /* Quick info items */
-    .quick-info-item {
-      display: flex;
-      flex-direction: column;
-      gap: 0.15rem;
-    }
-
-    .quick-info-label {
-      font-size: 0.67rem;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      color: #3a4455;
-    }
-
-    .quick-info-value {
-      font-size: 0.8rem;
-      color: #94a3b8;
-      font-weight: 600;
-    }
-
-    /* ── Launch Cards ── */
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.1rem;
-    }
-
-    .card {
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.75rem;
-      text-align: left;
-      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .card::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: linear-gradient(135deg, rgba(37,99,235,0.04) 0%, transparent 60%);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-
-    .card:hover {
-      border-color: #2a4a7f;
-      transform: translateY(-3px);
-      box-shadow: 0 8px 28px rgba(0,0,0,0.35), 0 0 0 1px rgba(37,99,235,0.08);
-    }
-
-    .card:hover::before { opacity: 1; }
-
-    .card-icon {
-      width: 42px; height: 42px;
-      border-radius: 9px;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 1.1rem;
-      font-size: 1.1rem; font-weight: 700;
-      transition: transform 0.2s;
-    }
-
-    .card:hover .card-icon { transform: scale(1.06); }
-
-    .card-icon.wasm { background-color: var(--blue-dim); color: #60a5fa; border: 1px solid var(--blue-border); }
-    .card-icon.js   { background-color: #221f10; color: #d4a520; border: 1px solid #3a3010; font-family: monospace; font-size: 0.9rem; }
-
-    .card h2 { font-size: 1.05rem; font-weight: 600; color: #e2e8f0; margin-bottom: 0.45rem; }
-
-    .card p { font-size: 0.865rem; line-height: 1.65; color: var(--text-muted); margin-bottom: 1.2rem; }
-
-    .tag-row { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 1.3rem; }
-
-    .tag {
-      font-size: 0.68rem; padding: 0.18rem 0.5rem;
-      border-radius: 4px;
-      background-color: #131518; border: 1px solid #23272f; color: #4b5563;
-    }
-
-    .tag.highlight { border-color: var(--blue-border); color: #60a5fa; background-color: rgba(26,37,64,0.6); }
-
-    .launch-btn {
-      display: inline-flex; align-items: center; gap: 0.45rem;
-      padding: 0.6rem 1.25rem;
-      border-radius: 7px;
-      font-size: 0.875rem; font-weight: 600;
-      cursor: pointer; text-decoration: none; border: none;
-      transition: background-color 0.15s, transform 0.15s, box-shadow 0.15s;
-    }
-
-    .launch-btn:hover { transform: translateY(-1px); }
-
-    .btn-wasm { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: #fff; box-shadow: 0 2px 10px rgba(37,99,235,0.3); }
-    .btn-wasm:hover { box-shadow: 0 4px 18px rgba(37,99,235,0.45); }
-
-    .btn-js { background-color: #1a1d22; color: #d4a520; border: 1px solid #3a3010; }
-    .btn-js:hover { background-color: #221f10; }
-
-    .btn-arrow { width: 14px; height: 14px; transition: transform 0.15s; }
-    .launch-btn:hover .btn-arrow { transform: translateX(3px); }
-
-    /* ══════════════════════════════════════════════
-       BETA 1.0.4 SHOWCASE (full-width with bg image)
-    ══════════════════════════════════════════════ */
-    .showcase-section {
+    select {
       width: 100%;
-      position: relative;
-      overflow: hidden;
-      min-height: 380px;
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.95rem;
+    }
+
+    .launch-row {
+      margin-top: 16px;
       display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 0;
-      animation: fadeUp 0.65s ease 0.2s both;
+      border-radius: 10px;
+      padding: 10px 14px;
+      text-decoration: none;
+      font-weight: 700;
+      border: 1px solid transparent;
+      transition: transform 0.12s ease, filter 0.12s ease;
     }
 
-    .showcase-bg {
-      position: absolute;
-      inset: 0;
-      background-image: url('https://github.com/user-attachments/assets/24d8fea1-38b9-4165-9b6f-9a927e619312');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      filter: brightness(0.38) saturate(0.8);
-      z-index: 0;
+    .btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue), var(--blue-2));
+      color: white;
     }
 
-    /* Build type tabs in showcase */
-    .build-tabs {
+    .btn-secondary {
+      background: transparent;
+      color: var(--muted);
+      border-color: var(--border);
+    }
+
+    .small {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .versions {
+      margin-top: 22px;
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .version-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      background: #121621;
+      display: grid;
+      gap: 10px;
+    }
+
+    .version-title {
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .version-links {
       display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1.25rem;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
-    .build-tab {
-      display: inline-flex; align-items: center; gap: 0.4rem;
-      padding: 0.35rem 0.85rem;
-      border-radius: 6px;
-      font-size: 0.78rem; font-weight: 600;
-      cursor: pointer; border: 1px solid var(--border);
-      background: rgba(13,15,18,0.55);
-      color: #4b5a6e;
-      transition: background 0.15s, border-color 0.15s, color 0.15s;
-      backdrop-filter: blur(6px);
-    }
-
-    .build-tab.active {
-      background: rgba(37,99,235,0.18);
-      border-color: rgba(37,99,235,0.45);
+    .btn-wasm {
+      background: #172554;
+      border-color: #1e3a8a;
       color: #93c5fd;
     }
 
-    .build-tab:hover:not(.active) {
-      background: rgba(255,255,255,0.05);
-      border-color: #2a3040;
-      color: #94a3b8;
+    .btn-js {
+      background: #3f2b10;
+      border-color: #7c4d14;
+      color: #fcd34d;
     }
 
-    .build-panel { display: none; }
-    .build-panel.active { display: block; }
-
-    .showcase-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        to bottom,
-        rgba(13,15,18,0.55) 0%,
-        rgba(13,15,18,0.15) 40%,
-        rgba(13,15,18,0.15) 60%,
-        rgba(13,15,18,0.85) 100%
-      );
-      z-index: 1;
+    .meta {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.85rem;
     }
 
-    .showcase-content {
-      position: relative;
-      z-index: 2;
-      width: 100%;
-      max-width: 1240px;
-      padding: 4rem 1.5rem;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
-      align-items: center;
-    }
-
-    .showcase-left {}
-
-    .showcase-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-size: 0.68rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: #60a5fa;
-      background: rgba(37,99,235,0.18);
-      border: 1px solid rgba(37,99,235,0.4);
-      border-radius: 4px;
-      padding: 0.2rem 0.6rem;
-      margin-bottom: 1rem;
-    }
-
-    .showcase-title {
-      font-size: clamp(1.6rem, 3vw, 2.4rem);
-      font-weight: 800;
-      color: #f1f5f9;
-      letter-spacing: -0.5px;
-      line-height: 1.15;
-      margin-bottom: 0.85rem;
-    }
-
-    .showcase-title span {
-      background: linear-gradient(135deg, #60a5fa, #a78bfa);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .showcase-desc {
-      font-size: 0.9rem;
-      color: #7a8fa8;
-      line-height: 1.75;
-      max-width: 460px;
-    }
-
-    .showcase-desc strong { color: #94a3b8; font-weight: 600; }
-
-    .showcase-actions {
-      display: flex;
-      gap: 0.75rem;
-      margin-top: 1.5rem;
-      flex-wrap: wrap;
-    }
-
-    .showcase-right {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .showcase-highlight {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.75rem;
-      background: rgba(13,15,18,0.6);
-      border: 1px solid rgba(37,99,235,0.18);
-      border-radius: 10px;
-      padding: 0.9rem 1.1rem;
-      backdrop-filter: blur(8px);
-    }
-
-    .showcase-highlight-icon {
-      width: 32px; height: 32px;
-      border-radius: 7px;
-      background: rgba(37,99,235,0.15);
-      border: 1px solid rgba(37,99,235,0.25);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.9rem;
-      flex-shrink: 0;
-    }
-
-    .showcase-highlight-body { display: flex; flex-direction: column; gap: 0.15rem; }
-    .showcase-highlight-title { font-size: 0.85rem; font-weight: 600; color: #d4dce8; }
-    .showcase-highlight-sub { font-size: 0.78rem; color: #4b5a6e; }
-
-    /* ══════════════════════════════════════════════
-       LOWER CONTENT AREA (latest release + versions)
-    ══════════════════════════════════════════════ */
-    .lower-content {
-      width: 100%;
-      max-width: 1240px;
-      padding: 3rem 1.5rem;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-      animation: fadeUp 0.65s ease 0.3s both;
-    }
-
-    /* Left column: Latest release card */
-    .latest-col { display: flex; flex-direction: column; gap: 0.9rem; }
-
-    .latest-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      flex: 1;
-    }
-
-    .latest-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
-      padding: 1.5rem 1.75rem 1.25rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .latest-title-group { display: flex; flex-direction: column; gap: 0.35rem; }
-
-    .latest-badge {
-      display: inline-flex; align-items: center; gap: 0.35rem;
-      font-size: 0.68rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.08em;
-      background: rgba(37,99,235,0.12); border: 1px solid var(--blue-border);
-      color: #60a5fa; border-radius: 4px; padding: 0.18rem 0.55rem; width: fit-content;
-    }
-
-    .latest-title { font-size: 1.3rem; font-weight: 700; color: #f1f5f9; letter-spacing: -0.2px; }
-    .latest-date { font-size: 0.78rem; color: var(--text-dim); }
-
-    .latest-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 0.3rem; }
-    .latest-meta .version-num { font-size: 1.5rem; font-weight: 800; color: #60a5fa; letter-spacing: -0.5px; line-height: 1; }
-    .latest-meta .version-sub { font-size: 0.72rem; color: #3a4455; text-transform: uppercase; letter-spacing: 0.06em; }
-
-    .latest-body { padding: 1.5rem 1.75rem; display: flex; flex-direction: column; gap: 1.1rem; }
-
-    .latest-desc { font-size: 0.875rem; line-height: 1.75; color: #5a6a80; }
-    .latest-desc strong { color: #94a3b8; font-weight: 600; }
-
-    .latest-highlights { display: flex; flex-direction: column; gap: 0.6rem; }
-
-    .highlight-item {
-      display: flex; align-items: flex-start; gap: 0.6rem;
-      font-size: 0.845rem; color: #5a6a80;
-    }
-
-    .highlight-item::before {
-      content: ''; flex-shrink: 0; margin-top: 7px;
-      width: 5px; height: 5px;
-      border-radius: 50%; background: #2563eb;
-    }
-
-    .highlight-item strong { color: #94a3b8; font-weight: 600; }
-
-    /* Right column: Versions */
-    .versions-col { display: flex; flex-direction: column; gap: 0.9rem; }
-
-    .versions-layout {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 0.75rem;
-    }
-
-    .version-item {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1.1rem 1.25rem;
-      cursor: pointer;
-      transition: border-color 0.2s, background-color 0.2s, transform 0.15s;
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 0.75rem;
-      position: relative;
-    }
-
-    .version-item:hover { border-color: #2a4a7f; background: #1b1f27; transform: translateY(-2px); }
-
-    .version-item.active {
-      border-color: var(--blue);
-      background: rgba(26,37,64,0.55);
-    }
-
-    .version-item.active::after {
-      content: '';
-      position: absolute; top: 10px; right: 10px;
-      width: 7px; height: 7px;
-      border-radius: 50%; background: #60a5fa;
-      animation: pulseGlow 2s ease-in-out infinite;
-    }
-
-    .version-left { display: flex; flex-direction: column; gap: 0.2rem; }
-    .version-name { font-size: 0.9rem; font-weight: 600; color: #d4dce8; }
-    .version-item.active .version-name { color: #93c5fd; }
-    .version-channel { font-size: 0.68rem; color: #3a4455; text-transform: uppercase; letter-spacing: 0.06em; }
-    .version-arrow { color: #2a3040; font-size: 0.75rem; transition: color 0.15s, transform 0.15s; }
-    .version-item:hover .version-arrow, .version-item.active .version-arrow { color: #60a5fa; transform: translateX(2px); }
-
-    /* Version detail panel */
-    .version-detail {
-      background: rgba(22,24,28,0.8);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1.3rem 1.5rem;
-      display: none;
-      animation: slideIn 0.25s ease both;
-    }
-
-    .version-detail.visible { display: block; }
-
-    .version-detail-title {
-      font-size: 0.78rem; font-weight: 600; color: #60a5fa;
-      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.55rem;
-    }
-
-    .version-detail-text { font-size: 0.855rem; line-height: 1.7; color: #5a6a80; }
-
-    /* ── Footer strip ── */
-    .footer-strip {
-      width: 100%;
-      max-width: 1240px;
-      padding: 0 1.5rem 2.5rem;
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem 2rem;
-      animation: fadeIn 0.6s ease 0.45s both;
-    }
-
-    .info-chips {
-      display: flex; gap: 1.5rem; flex-wrap: wrap;
-      font-size: 0.78rem; color: var(--text-dim);
-    }
-
-    .info-chips span {
-      display: flex; align-items: center; gap: 0.4rem;
-    }
-
-    .info-chips span::before {
-      content: '';
-      width: 5px; height: 5px;
-      border-radius: 50%; background-color: var(--blue);
-      display: inline-block; opacity: 0.7;
-    }
-
-    .footer-spacer { flex: 1; }
-
-    .social-row {
-      display: flex; gap: 0.75rem; flex-wrap: wrap;
-    }
-
-    .social-btn {
-      display: inline-flex; align-items: center; gap: 0.55rem;
-      padding: 0.6rem 1.2rem;
-      border-radius: 8px;
-      font-size: 0.85rem; font-weight: 600;
-      text-decoration: none; border: none; cursor: pointer;
-      transition: transform 0.15s, filter 0.15s, box-shadow 0.15s;
-    }
-
-    .social-btn:hover { transform: translateY(-2px); filter: brightness(1.12); }
-    .social-btn svg { width: 17px; height: 17px; flex-shrink: 0; }
-
-    .btn-youtube { background-color: #c00; color: #fff; box-shadow: 0 2px 8px rgba(204,0,0,0.25); }
-    .btn-youtube:hover { box-shadow: 0 4px 16px rgba(204,0,0,0.4); }
-
-    .btn-discord { background-color: #4752c4; color: #fff; box-shadow: 0 2px 8px rgba(88,101,242,0.2); }
-    .btn-discord:hover { box-shadow: 0 4px 16px rgba(88,101,242,0.4); }
-
-    footer {
-      position: relative; z-index: 1;
-      padding: 1.1rem 2rem;
-      border-top: 1px solid #181b21;
-      font-size: 0.73rem; color: #272d3a; text-align: center;
-    }
-
-    .footer-credit { color: #2563eb; font-weight: 600; }
-
-    /* ══════════════════════════════════════════════
-       RESPONSIVE — collapse to single column
-    ══════════════════════════════════════════════ */
-    @media (max-width: 1024px) {
-      .content-grid {
-        grid-template-columns: 1fr;
-        max-width: 680px;
-      }
-
-      .sidebar-left, .sidebar-right { grid-column: 1; }
-      .center-content { grid-column: 1; }
-
-      /* On tablet, show sidebars as horizontal rows */
-      .sidebar-left {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        order: 2;
-      }
-
-      .center-content { order: 1; }
-
-      .sidebar-right {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        order: 3;
-      }
-    }
-
-    @media (max-width: 900px) {
-      .showcase-content { grid-template-columns: 1fr; gap: 2rem; }
-      .showcase-right { display: none; }
-      .lower-content { grid-template-columns: 1fr; max-width: 680px; }
-    }
-
-    @media (max-width: 680px) {
-      .content-grid { padding: 0 1rem 2rem; }
-      .sidebar-left, .sidebar-right { grid-template-columns: 1fr; }
-      .lower-content { padding: 2rem 1rem; }
-      .footer-strip { padding: 0 1rem 2rem; }
-      .topbar { padding: 0.85rem 1rem; }
-      .topbar-links { gap: 1rem; }
-    }
-
-    @media (max-width: 480px) {
-      .showcase-content { padding: 2.5rem 1rem; }
-      .showcase-actions { flex-direction: column; }
+    @media (max-width: 640px) {
+      .controls { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
+  <main class="app">
+    <h1>Aero Client Launcher</h1>
+    <p class="subtitle">Pick your version and runtime, then launch instantly. WASM is faster; JavaScript is the fallback.</p>
 
-  <!-- Ambient background -->
-  <div class="bg-orbs" aria-hidden="true">
-    <span></span><span></span><span></span>
-  </div>
-
-  <!-- Top bar -->
-  <div class="topbar">
-    <div class="topbar-icon">
-      <svg viewBox="0 0 24 24">
-        <polygon points="12,2 22,7 22,17 12,22 2,17 2,7"/>
-        <line x1="12" y1="2" x2="12" y2="22"/>
-        <line x1="2" y1="7" x2="22" y2="7"/>
-        <line x1="2" y1="17" x2="22" y2="17"/>
-      </svg>
-    </div>
-    <span class="topbar-name">Aero Client</span>
-    <span class="topbar-version">beta 1.0.4</span>
-    <div class="topbar-spacer"></div>
-    <nav class="topbar-links">
-      <a href="https://discord.gg/JgFMgsuHux" target="_blank" rel="noopener noreferrer">Discord</a>
-      <a href="https://www.youtube.com/@acorndevv" target="_blank" rel="noopener noreferrer">YouTube</a>
-    </nav>
-  </div>
-
-  <div class="page-wrapper">
-
-    <!-- ── Hero ── -->
-    <div class="hero-section">
-      <span class="version-tag">Eaglercraft 1.12.2</span>
-      <h1>Aero <span class="hero-gradient-text">Client</span></h1>
-      <p class="subtitle">Choose your build and jump in. WASM is faster; JavaScript is the safe fallback.</p>
-    </div>
-
-    <!-- ══ Three-column grid: sidebars + launch cards ══ -->
-    <div class="content-grid">
-
-      <!-- Left sidebar -->
-      <aside class="sidebar-left">
-
-        <div class="sidebar-panel">
-          <div class="sidebar-panel-title">Client Stats</div>
-          <div class="stat-tile">
-            <span class="stat-value">2</span>
-            <span class="stat-label">Build Types</span>
-          </div>
-          <div class="stat-divider"></div>
-          <div class="stat-tile">
-            <span class="stat-value">1.0.4</span>
-            <span class="stat-label">Current Version</span>
-          </div>
-          <div class="stat-divider"></div>
-          <div class="stat-tile">
-            <span class="stat-value">1.12.2</span>
-            <span class="stat-label">Eaglercraft Base</span>
-          </div>
-        </div>
-
-        <div class="sidebar-panel">
-          <div class="sidebar-panel-title">Status</div>
-          <div class="status-row">
-            <span class="status-dot"></span>
-            <span>WASM build live</span>
-          </div>
-          <div class="status-row">
-            <span class="status-dot"></span>
-            <span>JS build live</span>
-          </div>
-          <div class="status-row">
-            <span class="status-dot yellow"></span>
-            <span>Beta — active dev</span>
-          </div>
-        </div>
-
-      </aside>
-
-      <!-- Center: launch cards -->
-      <div class="center-content">
-        <div class="section-label">Launch</div>
-        <div class="cards">
-
-          <!-- WASM -->
-          <div class="card">
-            <div class="card-icon wasm">⚡</div>
-            <h2>WASM Build</h2>
-            <p>WebAssembly runs much closer to native speed — lower latency, smoother frame times. Use this on any modern browser.</p>
-            <div class="tag-row">
-              <span class="tag highlight">Recommended</span>
-              <span class="tag">High Performance</span>
-              <span class="tag">Low Latency</span>
-            </div>
-            <a href="WASM Build.html" class="launch-btn btn-wasm">
-              Launch WASM
-              <svg class="btn-arrow" viewBox="0 0 24 24" fill="none"
-                   stroke="currentColor" stroke-width="2.5"
-                   stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-            </a>
-          </div>
-
-          <!-- JavaScript -->
-          <div class="card">
-            <div class="card-icon js">JS</div>
-            <h2>JavaScript Build</h2>
-            <p>Pure JavaScript, zero dependencies. If WASM ever causes problems on your device, this one always works.</p>
-            <div class="tag-row">
-              <span class="tag">Universal</span>
-              <span class="tag">No Setup</span>
-              <span class="tag">Stable</span>
-            </div>
-            <a href="Javascript Build.html" class="launch-btn btn-js">
-              Launch JavaScript
-              <svg class="btn-arrow" viewBox="0 0 24 24" fill="none"
-                   stroke="currentColor" stroke-width="2.5"
-                   stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-            </a>
-          </div>
-
-        </div>
+    <section class="controls" aria-label="Launch settings">
+      <div class="control">
+        <label for="versionSelect">Version</label>
+        <select id="versionSelect">
+          <option value="beta-1-0-4">Beta 1.0.4 (Latest)</option>
+          <option value="beta-1-0-0">Beta 1.0.0</option>
+        </select>
       </div>
 
-      <!-- Right sidebar -->
-      <aside class="sidebar-right">
-
-        <div class="sidebar-panel">
-          <div class="sidebar-panel-title">Community</div>
-          <a href="https://discord.gg/JgFMgsuHux" target="_blank" rel="noopener noreferrer" class="sidebar-social-link dc">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M20.3 3A18.8 18.8 0 0 0 15.6 1.5a.07.07 0 0 0-.07.04 13 13 0 0 0-.57 1.18 17.4 17.4 0 0 0-5.23 0A12.1 12.1 0 0 0 9.15 1.54a.07.07 0 0 0-.07-.04A18.7 18.7 0 0 0 3.7 3a.07.07 0 0 0-.03.03C.53 7.65-.32 12.15.1 16.6a.08.08 0 0 0 .03.05 18.9 18.9 0 0 0 5.7 2.88.07.07 0 0 0 .08-.03 13.5 13.5 0 0 0 1.16-1.89.07.07 0 0 0-.04-.1 12.4 12.4 0 0 1-1.78-.85.07.07 0 0 1-.01-.12l.36-.28a.07.07 0 0 1 .07-.01c3.73 1.7 7.77 1.7 11.46 0a.07.07 0 0 1 .07.01l.36.28a.07.07 0 0 1-.01.12 11.7 11.7 0 0 1-1.78.85.07.07 0 0 0-.04.1c.34.65.73 1.28 1.16 1.89a.07.07 0 0 0 .08.03 18.8 18.8 0 0 0 5.71-2.88.07.07 0 0 0 .03-.05c.48-4.98-.8-9.44-3.57-13.34a.06.06 0 0 0-.03-.03zM8.02 14.1c-1.13 0-2.06-1.04-2.06-2.31s.91-2.31 2.06-2.31c1.16 0 2.07 1.05 2.06 2.31 0 1.27-.91 2.31-2.06 2.31zm7.97 0c-1.13 0-2.06-1.04-2.06-2.31s.91-2.31 2.06-2.31c1.16 0 2.07 1.05 2.06 2.31 0 1.27-.9 2.31-2.06 2.31z"/>
-            </svg>
-            Join Discord
-          </a>
-          <a href="https://www.youtube.com/@acorndevv" target="_blank" rel="noopener noreferrer" class="sidebar-social-link yt">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.5 31.5 0 0 0 0 12a31.5 31.5 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.5 31.5 0 0 0 24 12a31.5 31.5 0 0 0-.5-5.8z"/>
-              <polygon points="9.75,15.5 15.5,12 9.75,8.5" fill="#c00"/>
-            </svg>
-            YouTube Channel
-          </a>
-        </div>
-
-        <div class="sidebar-panel">
-          <div class="sidebar-panel-title">Quick Info</div>
-          <div class="quick-info-item">
-            <span class="quick-info-label">Developer</span>
-            <span class="quick-info-value">AcornDev</span>
-          </div>
-          <div class="stat-divider"></div>
-          <div class="quick-info-item">
-            <span class="quick-info-label">License</span>
-            <span class="quick-info-value">Open Beta</span>
-          </div>
-          <div class="stat-divider"></div>
-          <div class="quick-info-item">
-            <span class="quick-info-label">Platform</span>
-            <span class="quick-info-value">Browser (Web)</span>
-          </div>
-        </div>
-
-        <div class="sidebar-panel">
-          <div class="sidebar-panel-title">Features</div>
-          <div class="feature-list">
-            <div class="feature-item"><span class="feature-dot"></span>Multi-mod bundle</div>
-            <div class="feature-item"><span class="feature-dot"></span>WASM &amp; JS runtimes</div>
-            <div class="feature-item"><span class="feature-dot"></span>Full 1.12.2 compat</div>
-            <div class="feature-item"><span class="feature-dot"></span>No install needed</div>
-            <div class="feature-item"><span class="feature-dot"></span>Community driven</div>
-          </div>
-        </div>
-
-      </aside>
-
-    </div>
-    <!-- /content-grid -->
-
-    <!-- ══ Beta 1.0.4 showcase with background image ══ -->
-    <section class="showcase-section">
-      <div class="showcase-bg" aria-hidden="true"></div>
-      <div class="showcase-overlay" aria-hidden="true"></div>
-      <div class="showcase-content">
-
-        <div class="showcase-left">
-          <span class="showcase-badge">&#x25CF;&nbsp; Latest Release</span>
-          <h2 class="showcase-title">Beta <span>1.0.4</span><br>Is Live</h2>
-
-          <!-- WASM / JS tab switcher -->
-          <div class="build-tabs">
-            <button class="build-tab active" onclick="switchBuild('wasm', this)">⚡ WASM Build</button>
-            <button class="build-tab" onclick="switchBuild('js', this)">JS Build</button>
-          </div>
-
-          <!-- WASM panel -->
-          <div class="build-panel active" id="showcase-wasm">
-            <p class="showcase-desc">
-              <strong>Beta 1.0.4 — WASM Build.</strong> This version patches many bugs,
-              introduces more customizability for both the main menu and mod menu,
-              and improves FPS along with a lot of other improvements.
-              WebAssembly delivers near-native performance for the smoothest experience.
-            </p>
-            <div class="showcase-actions">
-              <a href="WASM Build.html" class="launch-btn btn-wasm">
-                Launch WASM
-                <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-              </a>
-            </div>
-          </div>
-
-          <!-- JS panel -->
-          <div class="build-panel" id="showcase-js">
-            <p class="showcase-desc">
-              <strong>Beta 1.0.4 — JavaScript Build.</strong> This version patches many bugs,
-              introduces more customizability for both the main menu and mod menu,
-              and improves FPS along with a lot of other improvements.
-              Pure JavaScript ensures maximum browser compatibility.
-            </p>
-            <div class="showcase-actions">
-              <a href="Javascript Build.html" class="launch-btn btn-js">
-                Launch JS
-                <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div class="showcase-right">
-          <div class="showcase-highlight">
-            <div class="showcase-highlight-icon">🐛</div>
-            <div class="showcase-highlight-body">
-              <span class="showcase-highlight-title">Bug patches</span>
-              <span class="showcase-highlight-sub">Many bugs fixed from previous builds</span>
-            </div>
-          </div>
-          <div class="showcase-highlight">
-            <div class="showcase-highlight-icon">🎨</div>
-            <div class="showcase-highlight-body">
-              <span class="showcase-highlight-title">More customizability</span>
-              <span class="showcase-highlight-sub">Main menu &amp; mod menu now more flexible</span>
-            </div>
-          </div>
-          <div class="showcase-highlight">
-            <div class="showcase-highlight-icon">⚡</div>
-            <div class="showcase-highlight-body">
-              <span class="showcase-highlight-title">FPS improvements</span>
-              <span class="showcase-highlight-sub">Smoother frame times across the board</span>
-            </div>
-          </div>
-          <div class="showcase-highlight">
-            <div class="showcase-highlight-icon">🔧</div>
-            <div class="showcase-highlight-body">
-              <span class="showcase-highlight-title">WASM + JS builds</span>
-              <span class="showcase-highlight-sub">Both runtimes updated to 1.0.4</span>
-            </div>
-          </div>
-          <div class="showcase-highlight">
-            <div class="showcase-highlight-icon">🚀</div>
-            <div class="showcase-highlight-body">
-              <span class="showcase-highlight-title">And much more</span>
-              <span class="showcase-highlight-sub">Lots of other improvements included</span>
-            </div>
-          </div>
-        </div>
-
+      <div class="control">
+        <label for="runtimeSelect">Runtime</label>
+        <select id="runtimeSelect">
+          <option value="wasm">WASM (Recommended)</option>
+          <option value="js">JavaScript</option>
+        </select>
       </div>
     </section>
 
-    <!-- ══ Lower content: Latest Release info + Versions ══ -->
-    <div class="lower-content">
-
-      <!-- Latest release details -->
-      <div class="latest-col">
-        <div class="section-label">Latest Release</div>
-        <div class="latest-card">
-          <div class="latest-header">
-            <div class="latest-title-group">
-              <span class="latest-badge">&#x25CF;&nbsp; Beta</span>
-              <span class="latest-title">Beta 1.0.4</span>
-              <span class="latest-date">Latest release &mdash; 2026</span>
-            </div>
-            <div class="latest-meta">
-              <span class="version-num">1.0.4</span>
-              <span class="version-sub">Beta Channel</span>
-            </div>
-          </div>
-          <div class="latest-body">
-            <p class="latest-desc">
-              <strong>Beta 1.0.4</strong> patches many bugs, introduces more customizability for both
-              the main menu and mod menu, and improves FPS along with a lot of other improvements.
-              Both the WASM and JavaScript builds have been updated to this version.
-            </p>
-            <div class="latest-highlights">
-              <div class="highlight-item"><span><strong>Bug patches</strong> &mdash; many issues from previous builds resolved</span></div>
-              <div class="highlight-item"><span><strong>Main menu &amp; mod menu</strong> &mdash; more customizability options added</span></div>
-              <div class="highlight-item"><span><strong>FPS improvements</strong> &mdash; smoother frame times across the board</span></div>
-              <div class="highlight-item"><span><strong>WASM + JS builds</strong> &mdash; both runtimes updated to 1.0.4</span></div>
-              <div class="highlight-item"><span><strong>And much more</strong> &mdash; lots of other improvements included</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Versions -->
-      <div class="versions-col">
-        <div class="section-label">Versions</div>
-
-        <div class="versions-layout">
-
-          <div class="version-item active" data-version="beta-1-0-4-wasm" onclick="selectVersion(this)">
-            <div class="version-left">
-              <span class="version-name">Beta 1.0.4 — WASM</span>
-              <span class="version-channel">Beta Channel &mdash; Latest</span>
-            </div>
-            <span class="version-arrow">&#x276F;</span>
-          </div>
-
-          <div class="version-item" data-version="beta-1-0-4-js" onclick="selectVersion(this)">
-            <div class="version-left">
-              <span class="version-name">Beta 1.0.4 — JS</span>
-              <span class="version-channel">Beta Channel &mdash; Latest</span>
-            </div>
-            <span class="version-arrow">&#x276F;</span>
-          </div>
-
-          <div class="version-item" data-version="beta-1-0-0" onclick="selectVersion(this)">
-            <div class="version-left">
-              <span class="version-name">Beta 1.0.0</span>
-              <span class="version-channel">Beta Channel &mdash; Previous</span>
-            </div>
-            <span class="version-arrow">&#x276F;</span>
-          </div>
-
-        </div>
-
-        <!-- Detail panels -->
-        <div class="version-detail visible" id="detail-beta-1-0-4-wasm">
-          <div class="version-detail-title">Beta 1.0.4 — WASM Build &mdash; Release Notes</div>
-          <div class="version-detail-text">
-            Patches many bugs, introduces more customizability for both the main menu and mod menu,
-            and improves FPS along with a lot of other improvements.
-            WebAssembly build delivers near-native performance for the best in-game experience.
-          </div>
-        </div>
-
-        <div class="version-detail" id="detail-beta-1-0-4-js">
-          <div class="version-detail-title">Beta 1.0.4 — JavaScript Build &mdash; Release Notes</div>
-          <div class="version-detail-text">
-            Patches many bugs, introduces more customizability for both the main menu and mod menu,
-            and improves FPS along with a lot of other improvements.
-            Pure JavaScript build — maximum browser compatibility, zero dependencies.
-          </div>
-        </div>
-
-        <div class="version-detail" id="detail-beta-1-0-0">
-          <div class="version-detail-title">Beta 1.0.0 &mdash; Release Notes</div>
-          <div class="version-detail-text">
-            First public beta. Ships with the initial set of mods and client features.
-            Both WASM and JavaScript builds are available. This is the foundation everything
-            else was built on.
-          </div>
-        </div>
-      </div>
-
+    <div class="launch-row">
+      <a id="launchSelected" class="btn btn-primary" href="WASM Build Beta 1.0.4.html">Launch Selected</a>
+      <a id="openAll" class="btn btn-secondary" href="#versions">See All Launch Buttons</a>
     </div>
-    <!-- /lower-content -->
+    <p class="small" id="selectedInfo">Selected: Beta 1.0.4 • WASM</p>
 
-    <!-- ── Footer strip ── -->
-    <div class="footer-strip">
-      <div class="info-chips">
-        <span>Eaglercraft 1.12.2</span>
-        <span>Aero Client Beta 1.0.4</span>
-        <span>WASM &amp; JS builds</span>
-      </div>
-      <div class="footer-spacer"></div>
-      <div class="social-row">
-        <a href="https://www.youtube.com/@acorndevv" target="_blank" rel="noopener noreferrer" class="social-btn btn-youtube">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.5 31.5 0 0 0 0 12a31.5 31.5 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.5 31.5 0 0 0 24 12a31.5 31.5 0 0 0-.5-5.8z"/>
-            <polygon points="9.75,15.5 15.5,12 9.75,8.5" fill="#c00"/>
-          </svg>
-          YouTube
-        </a>
-        <a href="https://discord.gg/JgFMgsuHux" target="_blank" rel="noopener noreferrer" class="social-btn btn-discord">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M20.3 3A18.8 18.8 0 0 0 15.6 1.5a.07.07 0 0 0-.07.04 13 13 0 0 0-.57 1.18 17.4 17.4 0 0 0-5.23 0A12.1 12.1 0 0 0 9.15 1.54a.07.07 0 0 0-.07-.04A18.7 18.7 0 0 0 3.7 3a.07.07 0 0 0-.03.03C.53 7.65-.32 12.15.1 16.6a.08.08 0 0 0 .03.05 18.9 18.9 0 0 0 5.7 2.88.07.07 0 0 0 .08-.03 13.5 13.5 0 0 0 1.16-1.89.07.07 0 0 0-.04-.1 12.4 12.4 0 0 1-1.78-.85.07.07 0 0 1-.01-.12l.36-.28a.07.07 0 0 1 .07-.01c3.73 1.7 7.77 1.7 11.46 0a.07.07 0 0 1 .07.01l.36.28a.07.07 0 0 1-.01.12 11.7 11.7 0 0 1-1.78.85.07.07 0 0 0-.04.1c.34.65.73 1.28 1.16 1.89a.07.07 0 0 0 .08.03 18.8 18.8 0 0 0 5.71-2.88.07.07 0 0 0 .03-.05c.48-4.98-.8-9.44-3.57-13.34a.06.06 0 0 0-.03-.03zM8.02 14.1c-1.13 0-2.06-1.04-2.06-2.31s.91-2.31 2.06-2.31c1.16 0 2.07 1.05 2.06 2.31 0 1.27-.91 2.31-2.06 2.31zm7.97 0c-1.13 0-2.06-1.04-2.06-2.31s.91-2.31 2.06-2.31c1.16 0 2.07 1.05 2.06 2.31 0 1.27-.9 2.31-2.06 2.31z"/>
-          </svg>
-          Discord
-        </a>
-      </div>
-    </div>
+    <section id="versions" class="versions" aria-label="All versions">
+      <article class="version-card">
+        <div class="version-title">Beta 1.0.4 (Latest)</div>
+        <div class="version-links">
+          <a href="WASM Build Beta 1.0.4.html" class="btn btn-wasm">Launch WASM</a>
+          <a href="Javascript Build Beta 1.0.4.html" class="btn btn-js">Launch JavaScript</a>
+        </div>
+      </article>
 
-  </div>
-  <!-- /page-wrapper -->
+      <article class="version-card">
+        <div class="version-title">Beta 1.0.0</div>
+        <div class="version-links">
+          <a href="WASM Build.html" class="btn btn-wasm">Launch WASM</a>
+          <a href="Javascript Build.html" class="btn btn-js">Launch JavaScript</a>
+        </div>
+      </article>
+    </section>
 
-  <footer>
-    &copy; 2026 Aero Client &mdash; Eaglercraft 1.12.2 &mdash; <span class="footer-credit">Coded by AcornDev</span>
-  </footer>
+    <p class="meta">Eaglercraft 1.12.2 • Aero Client • Community: <a href="https://discord.gg/JgFMgsuHux" target="_blank" rel="noopener noreferrer">Discord</a> / <a href="https://www.youtube.com/@acorndevv" target="_blank" rel="noopener noreferrer">YouTube</a></p>
+  </main>
 
   <script>
-    function selectVersion(el) {
-      document.querySelectorAll('.version-item').forEach(function(item) {
-        item.classList.remove('active');
-      });
-      document.querySelectorAll('.version-detail').forEach(function(panel) {
-        panel.classList.remove('visible');
-      });
-      el.classList.add('active');
-      var id = 'detail-' + el.dataset.version;
-      var panel = document.getElementById(id);
-      if (panel) panel.classList.add('visible');
-    }
+    (function () {
+      var launchMap = {
+        'beta-1-0-4': {
+          label: 'Beta 1.0.4',
+          wasm: 'WASM Build Beta 1.0.4.html',
+          js: 'Javascript Build Beta 1.0.4.html'
+        },
+        'beta-1-0-0': {
+          label: 'Beta 1.0.0',
+          wasm: 'WASM Build.html',
+          js: 'Javascript Build.html'
+        }
+      };
 
-    function switchBuild(build, btn) {
-      document.querySelectorAll('.build-tab').forEach(function(t) { t.classList.remove('active'); });
-      document.querySelectorAll('.build-panel').forEach(function(p) { p.classList.remove('active'); });
-      btn.classList.add('active');
-      var panel = document.getElementById('showcase-' + build);
-      if (panel) panel.classList.add('active');
-    }
+      var versionSelect = document.getElementById('versionSelect');
+      var runtimeSelect = document.getElementById('runtimeSelect');
+      var launchSelected = document.getElementById('launchSelected');
+      var selectedInfo = document.getElementById('selectedInfo');
+
+      function updateLaunchTarget() {
+        var version = versionSelect.value;
+        var runtime = runtimeSelect.value;
+        var config = launchMap[version];
+
+        if (!config || !config[runtime]) {
+          launchSelected.removeAttribute('href');
+          selectedInfo.textContent = 'Invalid selection';
+          return;
+        }
+
+        launchSelected.href = config[runtime];
+        selectedInfo.textContent = 'Selected: ' + config.label + ' • ' + (runtime === 'wasm' ? 'WASM' : 'JavaScript');
+      }
+
+      versionSelect.addEventListener('change', updateLaunchTarget);
+      runtimeSelect.addEventListener('change', updateLaunchTarget);
+      updateLaunchTarget();
+    })();
   </script>
-
 </body>
 </html>
