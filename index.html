@@ -3,18 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aero Client Launcher</title>
+  <title>Aero Client Launcher • v1.0.5</title>
   <style>
     :root {
-      --bg: #0f1115;
-      --panel: #171a21;
-      --panel-2: #1d2230;
-      --text: #e5e7eb;
-      --muted: #9ca3af;
-      --blue: #3b82f6;
-      --blue-2: #2563eb;
-      --gold: #f59e0b;
-      --border: #2b3140;
+      --bg: #0b0d13;
+      --panel: #141a24;
+      --panel-2: #1b2231;
+      --text: #e7ebf2;
+      --muted: #a2abba;
+      --blue: #5d8dff;
+      --blue-2: #4f46e5;
+      --accent: #a855f7;
+      --border: #293245;
     }
 
     * { box-sizing: border-box; }
@@ -23,7 +23,10 @@
       margin: 0;
       min-height: 100vh;
       font-family: Inter, Segoe UI, Roboto, sans-serif;
-      background: radial-gradient(circle at top, #111827, var(--bg) 45%);
+      background:
+        radial-gradient(1200px 560px at 10% -10%, rgba(93, 141, 255, 0.16), transparent 45%),
+        radial-gradient(900px 420px at 90% 0%, rgba(168, 85, 247, 0.16), transparent 45%),
+        var(--bg);
       color: var(--text);
       display: grid;
       place-items: center;
@@ -32,12 +35,20 @@
 
     .app {
       width: 100%;
-      max-width: 760px;
+      max-width: 860px;
       background: var(--panel);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 24px;
-      box-shadow: 0 16px 50px rgba(0, 0, 0, 0.35);
+      border-radius: 16px;
+      padding: 26px;
+      box-shadow: 0 24px 55px rgba(0, 0, 0, 0.4);
+    }
+
+    .hero {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: flex-start;
     }
 
     h1 {
@@ -46,10 +57,24 @@
       letter-spacing: -0.02em;
     }
 
+    .badge {
+      border: 1px solid rgba(93, 141, 255, 0.5);
+      background: rgba(93, 141, 255, 0.14);
+      color: #d4e4ff;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
     .subtitle {
       margin: 8px 0 0;
       color: var(--muted);
       line-height: 1.5;
+      max-width: 60ch;
     }
 
     .controls {
@@ -77,7 +102,7 @@
       background: var(--panel-2);
       color: var(--text);
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 10px 12px;
       font-size: 0.95rem;
     }
@@ -94,7 +119,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 10px 14px;
       text-decoration: none;
       font-weight: 700;
@@ -105,7 +130,7 @@
     .btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
 
     .btn-primary {
-      background: linear-gradient(135deg, var(--blue), var(--blue-2));
+      background: linear-gradient(135deg, var(--blue), var(--blue-2) 68%);
       color: white;
     }
 
@@ -131,9 +156,9 @@
 
     .version-card {
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 14px;
-      background: #121621;
+      background: #111724;
       display: grid;
       gap: 10px;
     }
@@ -149,16 +174,50 @@
       flex-wrap: wrap;
     }
 
-    .btn-wasm {
-      background: #172554;
-      border-color: #1e3a8a;
-      color: #93c5fd;
+    .btn-wasm,
+    .btn-js {
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: #1b2331;
     }
 
     .btn-js {
-      background: #3f2b10;
-      border-color: #7c4d14;
-      color: #fcd34d;
+      background: #211c2e;
+    }
+
+    .release-notes {
+      margin-top: 20px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .release-notes::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(140deg, rgba(12, 16, 24, 0.82), rgba(18, 26, 39, 0.74)),
+        url("https://github.com/user-attachments/assets/c4412c98-36d8-4747-b45e-e797b96b4ab5") center/cover no-repeat;
+      opacity: 0.48;
+      z-index: -1;
+    }
+
+    .release-title {
+      margin: 0 0 10px;
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .release-list {
+      margin: 0;
+      padding-left: 18px;
+      color: #d7deeb;
+      display: grid;
+      gap: 8px;
     }
 
     .meta {
@@ -169,19 +228,26 @@
 
     @media (max-width: 640px) {
       .controls { grid-template-columns: 1fr; }
+      .hero { flex-direction: column; }
     }
   </style>
 </head>
 <body>
   <main class="app">
-    <h1>Aero Client Launcher</h1>
-    <p class="subtitle">Pick your version and runtime, then launch instantly. WASM is faster; JavaScript is the fallback.</p>
+    <div class="hero">
+      <div>
+        <h1>Aero Client Launcher</h1>
+        <p class="subtitle">Launch Aero Client instantly with the new full v1.0.5 release. Choose WASM for best performance or JavaScript for compatibility.</p>
+      </div>
+      <span class="badge">Main Release v1.0.5</span>
+    </div>
 
     <section class="controls" aria-label="Launch settings">
       <div class="control">
         <label for="versionSelect">Version</label>
         <select id="versionSelect">
-          <option value="beta-1-0-4">Beta 1.0.4 (Latest)</option>
+          <option value="v1-0-5">v1.0.5 (Main Release)</option>
+          <option value="beta-1-0-4">Beta 1.0.4</option>
           <option value="beta-1-0-0">Beta 1.0.0</option>
         </select>
       </div>
@@ -196,14 +262,22 @@
     </section>
 
     <div class="launch-row">
-      <a id="launchSelected" class="btn btn-primary" href="WASM Build Beta 1.0.4.html">Launch Selected</a>
+      <a id="launchSelected" class="btn btn-primary" href="WASM Build v1.0.5.html">Launch Selected</a>
       <a id="openAll" class="btn btn-secondary" href="#versions">See All Launch Buttons</a>
     </div>
-    <p class="small" id="selectedInfo">Selected: Beta 1.0.4 • WASM</p>
+    <p class="small" id="selectedInfo">Selected: v1.0.5 • WASM</p>
 
     <section id="versions" class="versions" aria-label="All versions">
       <article class="version-card">
-        <div class="version-title">Beta 1.0.4 (Latest)</div>
+        <div class="version-title">v1.0.5 (Main Release)</div>
+        <div class="version-links">
+          <a href="WASM Build v1.0.5.html" class="btn btn-wasm">Launch WASM</a>
+          <a href="Javascript Build v1.0.5.html" class="btn btn-js">Launch JavaScript</a>
+        </div>
+      </article>
+
+      <article class="version-card">
+        <div class="version-title">Beta 1.0.4</div>
         <div class="version-links">
           <a href="WASM Build Beta 1.0.4.html" class="btn btn-wasm">Launch WASM</a>
           <a href="Javascript Build Beta 1.0.4.html" class="btn btn-js">Launch JavaScript</a>
@@ -219,12 +293,29 @@
       </article>
     </section>
 
+    <section class="release-notes" aria-label="Release notes for v1.0.5">
+      <h2 class="release-title">Release Notes • v1.0.5</h2>
+      <ul class="release-list">
+        <li>Added ViaItems support, including maces, netherite gear, wind charges, and more.</li>
+        <li>Introduced the Motion Blur mod alongside additional gameplay and utility mods.</li>
+        <li>Reduced lag and improved FPS with targeted optimization updates.</li>
+        <li>Expanded theme and menu customization options.</li>
+        <li>Improved PvP-focused mods for better combat performance.</li>
+        <li>v1.0.5 is now the full main release, no longer in beta.</li>
+      </ul>
+    </section>
+
     <p class="meta">Eaglercraft 1.12.2 • Aero Client • Community: <a href="https://discord.gg/JgFMgsuHux" target="_blank" rel="noopener noreferrer">Discord</a> / <a href="https://www.youtube.com/@acorndevv" target="_blank" rel="noopener noreferrer">YouTube</a></p>
   </main>
 
   <script>
     (function () {
       var launchMap = {
+        'v1-0-5': {
+          label: 'v1.0.5',
+          wasm: 'WASM Build v1.0.5.html',
+          js: 'Javascript Build v1.0.5.html'
+        },
         'beta-1-0-4': {
           label: 'Beta 1.0.4',
           wasm: 'WASM Build Beta 1.0.4.html',
