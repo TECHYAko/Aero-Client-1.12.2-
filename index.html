@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Aero Client Launcher • v1.0.6</title>
+        <title>Aero Client Launcher</title>
         <style>
             :root {
                 --bg: #02081a;
@@ -317,12 +317,19 @@
                 <a
                     id="launchSelected"
                     class="btn btn-primary"
-                    href="1.0.6/wasm.html"
+                    href="0.0.0/wasm.html"
                     >Launch Selected</a
+                >
+                <a
+                    id="downloadSelected"
+                    class="btn btn-primary"
+                    href="0.0.0/wasm.html"
+                    download
+                    >Download Selected</a
                 >
                 <div class="status" id="selectedInfo">
                     <span class="dot"></span>
-                    <span>Selected: v1.0.6 • WASM</span>
+                    <span>Selected: v0.0.0 • WASM</span>
                 </div>
             </div>
 
@@ -422,6 +429,8 @@
                 var versionSelect = document.getElementById("versionSelect");
                 var runtimeSelect = document.getElementById("runtimeSelect");
                 var launchSelected = document.getElementById("launchSelected");
+                var downloadSelected =
+                    document.getElementById("downloadSelected");
                 var selectedInfo = document.getElementById("selectedInfo");
 
                 function syncVersionOptions() {
@@ -469,7 +478,9 @@
 
                 function setInvalidState() {
                     launchSelected.removeAttribute("href");
+                    downloadSelected.removeAttribute("href");
                     launchSelected.setAttribute("aria-disabled", "true");
+                    downloadSelected.setAttribute("aria-disabled", "true");
                     selectedInfo.innerHTML =
                         "<span class='dot'></span><span>Invalid selection</span>";
                 }
@@ -499,8 +510,20 @@
                         target = fallback;
                     }
 
+                    var filename =
+                        config.label
+                            .replace("Beta ", "beta-v")
+                            .replace(/\s/g, "") +
+                        "-" +
+                        runtime +
+                        ".html";
+
                     launchSelected.href = target;
+                    downloadSelected.href = target;
+                    downloadSelected.setAttribute("download", filename);
                     launchSelected.removeAttribute("aria-disabled");
+                    downloadSelected.removeAttribute("aria-disabled");
+
                     selectedInfo.innerHTML =
                         "<span class='dot'></span><span>Selected: " +
                         config.label +
