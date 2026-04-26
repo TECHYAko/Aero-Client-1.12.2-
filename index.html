@@ -1,361 +1,499 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aero Client Launcher • v1.0.5</title>
-  <style>
-    :root {
-      --bg: #0b0d13;
-      --panel: #141a24;
-      --panel-2: #1b2231;
-      --text: #e7ebf2;
-      --muted: #a2abba;
-      --blue: #5d8dff;
-      --blue-2: #4f46e5;
-      --accent: #a855f7;
-      --border: #293245;
-    }
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Aero Client Launcher • v1.0.6</title>
+        <style>
+            :root {
+                --bg: #02081a;
+                --panel: #0a1228;
+                --panel-2: #0f1a38;
+                --panel-3: #101f45;
+                --text: #ffffff;
+                --muted: #b8c7ea;
+                --blue: #218aff;
+                --blue-strong: #0f6dd4;
+                --border: #223663;
+                --ring: rgba(33, 138, 255, 0.32);
+                --shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+            }
 
-    * { box-sizing: border-box; }
+            * {
+                box-sizing: border-box;
+            }
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Inter, Segoe UI, Roboto, sans-serif;
-      background:
-        radial-gradient(1200px 560px at 10% -10%, rgba(93, 141, 255, 0.16), transparent 45%),
-        radial-gradient(900px 420px at 90% 0%, rgba(168, 85, 247, 0.16), transparent 45%),
-        var(--bg);
-      color: var(--text);
-      display: grid;
-      place-items: center;
-      padding: 24px;
-    }
+            html,
+            body {
+                height: 100%;
+            }
 
-    .app {
-      width: 100%;
-      max-width: 860px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 26px;
-      box-shadow: 0 24px 55px rgba(0, 0, 0, 0.4);
-    }
+            body {
+                margin: 0;
+                min-height: 100vh;
+                font-family:
+                    Inter,
+                    ui-sans-serif,
+                    system-ui,
+                    -apple-system,
+                    Segoe UI,
+                    Roboto,
+                    sans-serif;
+                background: var(--bg);
+                color: var(--text);
+                display: grid;
+                place-items: center;
+                padding: 24px;
+            }
 
-    .hero {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 14px;
-      align-items: flex-start;
-    }
+            .app {
+                width: 100%;
+                max-width: 920px;
+                background: linear-gradient(
+                    180deg,
+                    rgba(255, 255, 255, 0.02),
+                    rgba(255, 255, 255, 0)
+                );
+                background-color: var(--panel);
+                border: 1px solid var(--border);
+                border-radius: 20px;
+                padding: 30px;
+                box-shadow: var(--shadow);
+            }
 
-    h1 {
-      margin: 0;
-      font-size: clamp(1.8rem, 4vw, 2.3rem);
-      letter-spacing: -0.02em;
-    }
+            .hero {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                gap: 16px;
+                align-items: flex-start;
+            }
 
-    .badge {
-      border: 1px solid rgba(93, 141, 255, 0.5);
-      background: rgba(93, 141, 255, 0.14);
-      color: #d4e4ff;
-      border-radius: 999px;
-      padding: 6px 12px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
+            .hero-copy {
+                max-width: 66ch;
+            }
 
-    .subtitle {
-      margin: 8px 0 0;
-      color: var(--muted);
-      line-height: 1.5;
-      max-width: 60ch;
-    }
+            h1 {
+                margin: 0;
+                font-size: clamp(1.95rem, 4vw, 2.5rem);
+                letter-spacing: -0.03em;
+                line-height: 1.1;
+            }
 
-    .controls {
-      margin-top: 20px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
+            .badge {
+                border: 1px solid #2f71d8;
+                background: #102a63;
+                color: #ffffff;
+                border-radius: 999px;
+                padding: 8px 12px;
+                font-size: 0.74rem;
+                font-weight: 800;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                white-space: nowrap;
+            }
 
-    .control {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+            .subtitle {
+                margin: 12px 0 0;
+                color: var(--muted);
+                line-height: 1.6;
+                font-size: 0.98rem;
+            }
 
-    label {
-      font-size: 0.82rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
+            .controls {
+                margin-top: 24px;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
+            }
 
-    select {
-      width: 100%;
-      background: var(--panel-2);
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px 12px;
-      font-size: 0.95rem;
-    }
+            .control {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
 
-    .launch-row {
-      margin-top: 16px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-    }
+            label {
+                font-size: 0.75rem;
+                color: var(--muted);
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                font-weight: 700;
+            }
 
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 12px;
-      padding: 10px 14px;
-      text-decoration: none;
-      font-weight: 700;
-      border: 1px solid transparent;
-      transition: transform 0.12s ease, filter 0.12s ease;
-    }
+            select {
+                width: 100%;
+                background: var(--panel-2);
+                color: var(--text);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                padding: 11px 12px;
+                font-size: 0.95rem;
+                outline: none;
+                transition:
+                    border-color 0.15s ease,
+                    box-shadow 0.15s ease,
+                    background 0.15s ease,
+                    opacity 0.15s ease;
+            }
 
-    .btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
+            select:hover {
+                border-color: #2d4d8a;
+            }
 
-    .btn-primary {
-      background: linear-gradient(135deg, var(--blue), var(--blue-2) 68%);
-      color: white;
-    }
+            select:focus {
+                border-color: var(--blue);
+                box-shadow: 0 0 0 4px var(--ring);
+            }
 
-    .btn-secondary {
-      background: transparent;
-      color: var(--muted);
-      border-color: var(--border);
-    }
+            select:disabled {
+                background: #0d1630;
+                color: #90a8d8;
+                border-color: #1c2d56;
+                cursor: not-allowed;
+            }
 
-    .small {
-      margin-top: 10px;
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
+            .launch-row {
+                margin-top: 18px;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                align-items: center;
+            }
 
-    .versions {
-      margin-top: 22px;
-      border-top: 1px solid var(--border);
-      padding-top: 16px;
-      display: grid;
-      gap: 12px;
-    }
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 12px;
+                padding: 10px 16px;
+                min-height: 42px;
+                text-decoration: none;
+                font-weight: 700;
+                letter-spacing: 0.01em;
+                border: 1px solid transparent;
+                transition:
+                    transform 0.12s ease,
+                    filter 0.12s ease,
+                    border-color 0.12s ease,
+                    background 0.12s ease;
+            }
 
-    .version-card {
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
-      background: #111724;
-      display: grid;
-      gap: 10px;
-    }
+            .btn:hover {
+                transform: translateY(-1px);
+                filter: brightness(1.05);
+            }
 
-    .version-title {
-      font-weight: 700;
-      font-size: 1rem;
-    }
+            .btn:active {
+                transform: translateY(0);
+            }
 
-    .version-links {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
+            .btn-primary {
+                background: var(--blue);
+                color: #ffffff;
+                border-color: #3996ff;
+                box-shadow: inset 0 -10px 24px rgba(0, 0, 0, 0.12);
+            }
 
-    .btn-wasm,
-    .btn-js {
-      border: 1px solid var(--border);
-      color: var(--text);
-      background: #1b2331;
-    }
+            .btn-primary[aria-disabled="true"] {
+                background: #174377;
+                border-color: #255085;
+                color: #acc9ef;
+                pointer-events: none;
+                cursor: not-allowed;
+                filter: none;
+                transform: none;
+            }
 
-    .btn-js {
-      background: #211c2e;
-    }
+            .status {
+                margin-top: 12px;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                color: var(--muted);
+                font-size: 0.9rem;
+                padding: 9px 12px;
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                background: #0b1735;
+            }
 
-    .release-notes {
-      margin-top: 20px;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px;
-      position: relative;
-      overflow: hidden;
-      isolation: isolate;
-    }
+            .dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 999px;
+                background: #4aa3ff;
+                box-shadow: 0 0 0 5px rgba(74, 163, 255, 0.16);
+                flex: 0 0 auto;
+            }
 
-    .release-notes::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(140deg, rgba(12, 16, 24, 0.82), rgba(18, 26, 39, 0.74)),
-        url("https://github.com/user-attachments/assets/c4412c98-36d8-4747-b45e-e797b96b4ab5") center/cover no-repeat;
-      opacity: 0.48;
-      z-index: -1;
-    }
+            .release-notes {
+                margin-top: 22px;
+                border: 1px solid var(--border);
+                border-radius: 16px;
+                padding: 18px;
+                background: var(--panel-3);
+            }
 
-    .release-title {
-      margin: 0 0 10px;
-      font-size: 1.05rem;
-      font-weight: 700;
-    }
+            .release-title {
+                margin: 0 0 12px;
+                font-size: 1.05rem;
+                font-weight: 800;
+                letter-spacing: 0.01em;
+            }
 
-    .release-list {
-      margin: 0;
-      padding-left: 18px;
-      color: #d7deeb;
-      display: grid;
-      gap: 8px;
-    }
+            .release-list {
+                margin: 0;
+                padding-left: 20px;
+                color: #dbe8ff;
+                display: grid;
+                gap: 8px;
+                line-height: 1.45;
+            }
 
-    .meta {
-      margin-top: 18px;
-      color: var(--muted);
-      font-size: 0.85rem;
-    }
+            .meta {
+                margin-top: 16px;
+                color: var(--muted);
+                font-size: 0.86rem;
+                line-height: 1.5;
+            }
 
-    @media (max-width: 640px) {
-      .controls { grid-template-columns: 1fr; }
-      .hero { flex-direction: column; }
-    }
-  </style>
-</head>
-<body>
-  <main class="app">
-    <div class="hero">
-      <div>
-        <h1>Aero Client Launcher</h1>
-        <p class="subtitle">Launch Aero Client instantly with the new full v1.0.5 release. Choose WASM for best performance or JavaScript for compatibility.</p>
-      </div>
-      <span class="badge">Main Release v1.0.5</span>
-    </div>
+            .meta a {
+                color: #78bbff;
+                text-decoration: none;
+            }
 
-    <section class="controls" aria-label="Launch settings">
-      <div class="control">
-        <label for="versionSelect">Version</label>
-        <select id="versionSelect">
-          <option value="v1-0-5">v1.0.5 (Main Release)</option>
-          <option value="beta-1-0-4">Beta 1.0.4</option>
-          <option value="beta-1-0-0">Beta 1.0.0</option>
-        </select>
-      </div>
+            .meta a:hover {
+                text-decoration: underline;
+            }
 
-      <div class="control">
-        <label for="runtimeSelect">Runtime</label>
-        <select id="runtimeSelect">
-          <option value="wasm">WASM (Recommended)</option>
-          <option value="js">JavaScript</option>
-        </select>
-      </div>
-    </section>
+            @media (max-width: 700px) {
+                .app {
+                    padding: 20px;
+                    border-radius: 16px;
+                }
 
-    <div class="launch-row">
-      <a id="launchSelected" class="btn btn-primary" href="WASM Build v1.0.5.html">Launch Selected</a>
-      <a id="openAll" class="btn btn-secondary" href="#versions">See All Launch Buttons</a>
-    </div>
-    <p class="small" id="selectedInfo">Selected: v1.0.5 • WASM</p>
+                .controls {
+                    grid-template-columns: 1fr;
+                }
 
-    <section id="versions" class="versions" aria-label="All versions">
-      <article class="version-card">
-        <div class="version-title">v1.0.5 (Main Release)</div>
-        <div class="version-links">
-          <a href="WASM Build v1.0.5.html" class="btn btn-wasm">Launch WASM</a>
-          <a href="Javascript Build v1.0.5.html" class="btn btn-js">Launch JavaScript</a>
-        </div>
-      </article>
+                .hero {
+                    flex-direction: column;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <main class="app">
+            <div class="hero">
+                <div class="hero-copy">
+                    <h1>Aero Client Launcher</h1>
+                    <p class="subtitle">
+                        Launch Aero Client quickly with optimized runtime
+                        selection. WASM is recommended for performance, while
+                        JavaScript stays available where supported.
+                    </p>
+                </div>
+                <span class="badge">Latest Release: v1.0.7</span>
+            </div>
 
-      <article class="version-card">
-        <div class="version-title">Beta 1.0.4</div>
-        <div class="version-links">
-          <a href="WASM Build Beta 1.0.4.html" class="btn btn-wasm">Launch WASM</a>
-          <a href="Javascript Build Beta 1.0.4.html" class="btn btn-js">Launch JavaScript</a>
-        </div>
-      </article>
+            <section class="controls" aria-label="Launch settings">
+                <div class="control">
+                    <label for="versionSelect">Version</label>
+                    <select id="versionSelect">
+                        <option value="v0-0-0">v0.0.0</option>
+                    </select>
+                </div>
+                <div class="control">
+                    <label for="runtimeSelect">Runtime</label>
+                    <select id="runtimeSelect">
+                        <option value="wasm">WASM (Recommended)</option>
+                        <option value="js">JavaScript</option>
+                    </select>
+                </div>
+            </section>
 
-      <article class="version-card">
-        <div class="version-title">Beta 1.0.0</div>
-        <div class="version-links">
-          <a href="WASM Build.html" class="btn btn-wasm">Launch WASM</a>
-          <a href="Javascript Build.html" class="btn btn-js">Launch JavaScript</a>
-        </div>
-      </article>
-    </section>
+            <div class="launch-row">
+                <a
+                    id="launchSelected"
+                    class="btn btn-primary"
+                    href="1.0.6/wasm.html"
+                    >Launch Selected</a
+                >
+                <div class="status" id="selectedInfo">
+                    <span class="dot"></span>
+                    <span>Selected: v1.0.6 • WASM</span>
+                </div>
+            </div>
 
-    <section class="release-notes" aria-label="Release notes for v1.0.5">
-      <h2 class="release-title">Release Notes • v1.0.5</h2>
-      <ul class="release-list">
-        <li>Added ViaItems support, including maces, netherite gear, wind charges, and more.</li>
-        <li>Introduced the Motion Blur mod alongside additional gameplay and utility mods.</li>
-        <li>Reduced lag and improved FPS with targeted optimization updates.</li>
-        <li>Expanded theme and menu customization options.</li>
-        <li>Improved PvP-focused mods for better combat performance.</li>
-        <li>v1.0.5 is now the full main release, no longer in beta.</li>
-      </ul>
-    </section>
+            <section
+                class="release-notes"
+                aria-label="Release notes for current version"
+            >
+                <h2 class="release-title">Release Notes</h2>
+                <ul class="release-list">
+                    <li>
+                        Added ViaItems support, including maces, netherite gear,
+                        wind charges, and more.
+                    </li>
+                    <li>
+                        Introduced Motion Blur and additional gameplay and
+                        utility mods.
+                    </li>
+                    <li>
+                        Reduced lag and improved FPS with targeted optimization.
+                    </li>
+                    <li>Expanded theme and menu customization options.</li>
+                    <li>
+                        Improved PvP-focused mods for better combat performance.
+                    </li>
+                    <li>v1.0.5 promoted from beta to full release.</li>
+                </ul>
+            </section>
 
-    <p class="meta">Eaglercraft 1.12.2 • Aero Client • Community: <a href="https://discord.gg/JgFMgsuHux" target="_blank" rel="noopener noreferrer">Discord</a> / <a href="https://www.youtube.com/@acorndevv" target="_blank" rel="noopener noreferrer">YouTube</a></p>
+            <p class="meta">
+                Eaglercraft 1.12.2 • Aero Client • Community:
+                <a
+                    href="https://discord.gg/JgFMgsuHux"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Discord</a
+                >
+                /
+                <a
+                    href="https://www.youtube.com/@acorndevv"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >YouTube</a
+                >
+            </p>
+        </main>
 
-    <div class="launch-row">
-      <a href="wasm%20lite%20v1.0.6.html" class="btn btn-primary">Launch WASM Lite v1.0.6</a>
-    </div>
-  </main>
+        <script>
+            (function () {
+                var launchMap = {
+                    "v1-0-7": {
+                        label: "v1.0.7",
+                        wasm: "1.0.7/wasm.html",
+                        js: "1.0.7/js.html",
+                    },
+                    "v1-0-6": {
+                        label: "v1.0.6",
+                        wasm: "1.0.6/wasm.html",
+                        js: null,
+                    },
+                    "v1-0-5": {
+                        label: "v1.0.5",
+                        wasm: "1.0.5/wasm.html",
+                        js: "1.0.5/js.html",
+                    },
+                    "beta-1-0-4": {
+                        label: "Beta 1.0.4",
+                        wasm: "1.0.4b/wasm.html",
+                        js: "1.0.4b/js.html",
+                    },
+                    "beta-1-0-0": {
+                        label: "Beta 1.0.0",
+                        wasm: "1.0.0b/wasm.html",
+                        js: "1.0.0b/js.html",
+                    },
+                };
 
-  <script>
-    (function () {
-      var launchMap = {
-        'v1-0-5': {
-          label: 'v1.0.5',
-          wasm: 'WASM Build v1.0.5.html',
-          js: 'Javascript Build v1.0.5.html'
-        },
-        'beta-1-0-4': {
-          label: 'Beta 1.0.4',
-          wasm: 'WASM Build Beta 1.0.4.html',
-          js: 'Javascript Build Beta 1.0.4.html'
-        },
-        'beta-1-0-0': {
-          label: 'Beta 1.0.0',
-          wasm: 'WASM Build.html',
-          js: 'Javascript Build.html'
-        }
-      };
+                var versionSelect = document.getElementById("versionSelect");
+                var runtimeSelect = document.getElementById("runtimeSelect");
+                var launchSelected = document.getElementById("launchSelected");
+                var selectedInfo = document.getElementById("selectedInfo");
 
-      var versionSelect = document.getElementById('versionSelect');
-      var runtimeSelect = document.getElementById('runtimeSelect');
-      var launchSelected = document.getElementById('launchSelected');
-      var selectedInfo = document.getElementById('selectedInfo');
+                function syncVersionOptions() {
+                    var current = versionSelect.value;
+                    versionSelect.innerHTML = "";
 
-      function updateLaunchTarget() {
-        var version = versionSelect.value;
-        var runtime = runtimeSelect.value;
-        var config = launchMap[version];
+                    Object.keys(launchMap).forEach(function (key) {
+                        var opt = document.createElement("option");
+                        var cfg = launchMap[key];
+                        opt.value = key;
+                        opt.textContent = cfg.label;
+                        versionSelect.appendChild(opt);
+                    });
 
-        if (!config || !config[runtime]) {
-          launchSelected.removeAttribute('href');
-          selectedInfo.textContent = 'Invalid selection';
-          return;
-        }
+                    if (launchMap[current]) {
+                        versionSelect.value = current;
+                    } else if (versionSelect.options.length) {
+                        versionSelect.selectedIndex = 0;
+                    }
+                }
 
-        launchSelected.href = config[runtime];
-        selectedInfo.textContent = 'Selected: ' + config.label + ' • ' + (runtime === 'wasm' ? 'WASM' : 'JavaScript');
-      }
+                function setRuntimeState(config) {
+                    var hasWasm = !!(config && config.wasm);
+                    var hasJs = !!(config && config.js);
 
-      versionSelect.addEventListener('change', updateLaunchTarget);
-      runtimeSelect.addEventListener('change', updateLaunchTarget);
-      updateLaunchTarget();
-    })();
-  </script>
-</body>
+                    runtimeSelect.disabled = false;
+                    runtimeSelect.removeAttribute("aria-disabled");
+
+                    if (hasWasm && hasJs) {
+                        if (!config[runtimeSelect.value]) {
+                            runtimeSelect.value = hasWasm ? "wasm" : "js";
+                        }
+                        return;
+                    }
+
+                    runtimeSelect.disabled = true;
+                    runtimeSelect.setAttribute("aria-disabled", "true");
+
+                    if (hasWasm) {
+                        runtimeSelect.value = "wasm";
+                    } else if (hasJs) {
+                        runtimeSelect.value = "js";
+                    }
+                }
+
+                function setInvalidState() {
+                    launchSelected.removeAttribute("href");
+                    launchSelected.setAttribute("aria-disabled", "true");
+                    selectedInfo.innerHTML =
+                        "<span class='dot'></span><span>Invalid selection</span>";
+                }
+
+                function updateLaunchTarget() {
+                    var version = versionSelect.value;
+                    var config = launchMap[version];
+
+                    if (!config) {
+                        setInvalidState();
+                        return;
+                    }
+
+                    setRuntimeState(config);
+
+                    var runtime = runtimeSelect.value;
+                    var target = config[runtime];
+
+                    if (!target) {
+                        var fallback = config.wasm || config.js || null;
+                        if (!fallback) {
+                            setInvalidState();
+                            return;
+                        }
+                        runtime = config.wasm ? "wasm" : "js";
+                        runtimeSelect.value = runtime;
+                        target = fallback;
+                    }
+
+                    launchSelected.href = target;
+                    launchSelected.removeAttribute("aria-disabled");
+                    selectedInfo.innerHTML =
+                        "<span class='dot'></span><span>Selected: " +
+                        config.label +
+                        " • " +
+                        (runtime === "wasm" ? "WASM" : "JavaScript") +
+                        "</span>";
+                }
+
+                syncVersionOptions();
+                versionSelect.addEventListener("change", updateLaunchTarget);
+                runtimeSelect.addEventListener("change", updateLaunchTarget);
+                updateLaunchTarget();
+            })();
+        </script>
+    </body>
 </html>
